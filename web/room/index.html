@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#0c0914"><meta name="robots" content="noindex">
+<title>Duet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='38' cy='50' r='30' fill='none' stroke='%23ff4f8b' stroke-width='8'/%3E%3Ccircle cx='62' cy='50' r='30' fill='none' stroke='%237c5cff' stroke-width='8'/%3E%3Cpath d='M50 33 54.500 45.500 67 50 54.500 54.500 50 67 45.500 54.500 33 50 45.500 45.500z' fill='%23ffb84d'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/s/tokens.css">
+<link rel="stylesheet" href="room.css">
+</head><body>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true"><defs><linearGradient id="sg-heart" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8fb4"/><stop offset=".55" stop-color="#ff3b6b"/><stop offset="1" stop-color="#e01e5a"/></linearGradient><linearGradient id="sg-sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb84d"/><stop offset=".55" stop-color="#ff4f8b"/><stop offset="1" stop-color="#7c5cff"/></linearGradient><linearGradient id="sg-face" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd978"/><stop offset="1" stop-color="#ffb84d"/></linearGradient></defs></svg>
+
+<div id="app" class="gated">
+  <main id="stage">
+    <header id="top">
+      <span id="brand"></span>
+      <div id="pair"></div>
+      <div id="clock" hidden><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb84d"/><stop offset=".52" stop-color="#ff4f8b"/><stop offset="1" stop-color="#7c5cff"/></linearGradient></defs><circle class="track" cx="18" cy="18" r="15.500"/><circle class="arc" cx="18" cy="18" r="15.500" pathLength="100"/></svg><b id="time">0:00</b></div>
+      <div id="tools">
+        <button id="more" class="tool" type="button" aria-haspopup="true"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+        <button id="toggle" class="tool" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg><i id="dot" hidden></i></button>
+      </div>
+    </header>
+    <section id="act"></section>
+    <div id="burst" aria-hidden="true"></div>
+    <footer id="bottom"><div id="reactrow"></div></footer>
+    <div id="big" hidden><span></span></div>
+    <div id="net" hidden><i class="spin small"></i><span></span></div>
+    <div id="veil"><div id="veilfaces"></div><h1 id="veiltext"></h1><p id="veilsub"></p><div id="hello"></div></div>
+    <div id="menu" class="sheet" hidden></div>
+  </main>
+  <aside id="chat">
+    <div id="head"><b class="gradtext">Duet</b><span id="where"></span></div>
+    <div id="log" aria-live="polite"><p id="empty"></p></div>
+    <button id="latest" type="button" hidden></button>
+    <div id="typing"></div>
+    <div id="replybar" hidden><div><b></b><span></span></div><button id="replyclose" type="button" aria-label="Cancel reply">✕</button></div>
+    <form id="f" autocomplete="off">
+      <button id="emo" class="tool" type="button" aria-label="Emoji">😊</button>
+      <textarea id="t" rows="1" maxlength="600" enterkeyhint="send"></textarea>
+      <button id="send" type="submit" aria-label="Send"><svg class="i" viewBox="0 0 24 24"><path d="M3 20.500 22 12 3 3.500v6.600L15 12 3 13.900z"/></svg></button>
+    </form>
+  </aside>
+</div>
+<div id="msgmenu" hidden><div id="msgemoji"></div><button id="msgreply" type="button"></button><button id="msgcopy" type="button"></button></div>
+<div id="picker" hidden></div>
+<div id="modal" hidden><div id="modalbox" class="card"></div></div>
+<div id="done" hidden><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring r1" cx="38" cy="50" r="30" fill="none" stroke="#ff4f8b" stroke-width="8"/><circle class="ring r2" cx="62" cy="50" r="30" fill="none" stroke="#7c5cff" stroke-width="8"/><path class="spark" d="M50 33 54.500 45.500 67 50 54.500 54.500 50 67 45.500 54.500 33 50 45.500 45.500z" fill="#ffb84d"/></svg><span id="donetext"></span><small id="donesub"></small><a id="doneback" class="btn" hidden></a></div>
+<script src="/s/ui.js"></script>
+<script src="/s/icons.js"></script>
+<script src="strings.js"></script>
+<script src="net.js"></script>
+<script src="chat.js"></script>
+<script src="fx.js"></script>
+<script src="signs.js"></script>
+<script src="act-wavelength.js"></script>
+<script src="act-sketch.js"></script>
+<script src="act-signal.js"></script>
+<script src="act-thisorthat.js"></script>
+<script src="act-story.js"></script>
+<script src="main.js"></script>
+</body></html>

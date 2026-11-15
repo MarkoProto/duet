@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><title>Duet storyboard</title>
+<style>
+@font-face{font-family:"Bricolage Grotesque";font-weight:600;src:url(../web/shared/fonts/bricolage-latin.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-weight:400 600;src:url(../web/shared/fonts/figtree-latin.woff2) format("woff2")}
+*{box-sizing:border-box}
+body{margin:0;width:1760px;padding:56px 60px 44px;color:#f4f0fb;font:17px/1.4 Figtree,system-ui,sans-serif;background:radial-gradient(circle at 12% 8%,rgba(255,79,139,.30),transparent 46%),radial-gradient(circle at 88% 92%,rgba(124,92,255,.38),transparent 50%),radial-gradient(circle at 78% 6%,rgba(255,184,77,.16),transparent 36%),#0c0914}
+header{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+header svg{width:64px;height:64px}
+h1{margin:0;font:600 50px/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.01em}
+h1 span{background:linear-gradient(115deg,#ffb84d,#ff4f8b 52%,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:0 0 38px;color:#ada4c4;font-size:21px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:44px 34px}
+.step{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.phone{position:relative;width:236px;border-radius:30px;padding:8px;background:#171228;border:1.500px solid #3a2f57;box-shadow:0 22px 50px rgba(0,0,0,.5)}
+.phone img{display:block;width:100%;border-radius:23px}
+.n{position:absolute;left:-14px;top:-14px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:600 21px "Bricolage Grotesque",sans-serif;color:#1a0b1e;background:linear-gradient(115deg,#ffb84d,#ff4f8b 52%,#7c5cff);box-shadow:0 6px 18px rgba(255,79,139,.45)}
+.step h2{margin:16px 0 4px;font:600 22px/1.2 "Bricolage Grotesque",sans-serif}
+.step p{margin:0;color:#ada4c4;font-size:15.500px;max-width:270px;text-wrap:balance}
+.step:not(:nth-child(5n))::after{content:"";position:absolute;right:-27px;top:240px;width:20px;height:20px;border-top:3px solid #ff4f8b;border-right:3px solid #ff4f8b;transform:rotate(45deg);opacity:.9}
+footer{margin-top:36px;display:flex;justify-content:space-between;color:#ada4c4;font-size:15px}
+</style>
+<header><svg viewBox="0 0 100 100"><circle cx="38" cy="50" r="30" fill="none" stroke="#ff4f8b" stroke-width="8"/><circle cx="62" cy="50" r="30" fill="none" stroke="#7c5cff" stroke-width="8"/><path d="M50 33 54.5 45.5 67 50 54.5 54.5 50 67 45.5 54.5 33 50 45.5 45.5z" fill="#ffb84d"/></svg>
+<h1>Duet: <span>how a person moves through the app</span></h1></header>
+<p class="lead">Fifteen minutes with someone new. One small thing to do together, and then the room is gone.</p>
+<div class="grid"><div class="step"><div class="phone"><span class="n">1</span><img src="screens/user-02-name.png"></div><h2>Say who you are</h2><p>A name and one tick. No email, no password.</p></div><div class="step"><div class="phone"><span class="n">2</span><img src="screens/user-03-question.png"></div><h2>A few taps</h2><p>Six quick questions about your mood and how you like to spend time.</p></div><div class="step"><div class="phone"><span class="n">3</span><img src="screens/user-04-interests.png"></div><h2>What you like</h2><p>Pick up to three things you enjoy.</p></div><div class="step"><div class="phone"><span class="n">4</span><img src="screens/user-06-finding.png"></div><h2>We look for your person</h2><p>A short wait while someone who fits you is found.</p></div><div class="step"><div class="phone"><span class="n">5</span><img src="screens/user-07-paired.png"></div><h2>You are paired</h2><p>You see who it is, and why the two of you were put together.</p></div><div class="step"><div class="phone"><span class="n">6</span><img src="screens/user-08-say-hi.png"></div><h2>Say hi</h2><p>A private room opens, for just the two of you.</p></div><div class="step"><div class="phone"><span class="n">7</span><img src="screens/user-09-together.png"></div><h2>Fifteen minutes together</h2><p>One small activity, a chat and reactions, and a clock you share.</p></div><div class="step"><div class="phone"><span class="n">8</span><img src="screens/user-11-time-is-up.png"></div><h2>Time is up</h2><p>The room closes for good. Nothing said in it is kept.</p></div><div class="step"><div class="phone"><span class="n">9</span><img src="screens/user-12-two-questions.png"></div><h2>Two private questions</h2><p>Did you like it? Do you want more time? The other person only finds out if you both say yes.</p></div><div class="step"><div class="phone"><span class="n">10</span><img src="screens/user-14-both-said-yes.png"></div><h2>See you tomorrow</h2><p>If you both say yes, you meet again the next day, for longer.</p></div></div>
+<footer><span>If one of the two says no, both see the same neutral goodbye, and neither is told who said it.</span><span>Screens from a real run of the app, with the clock shortened to 50 seconds.</span></footer>

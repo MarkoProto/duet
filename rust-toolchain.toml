@@ -1,0 +1,7 @@
+# The toolchain Duet is built and tested with. rustup installs it on first use.
+# The two Linux targets are for the room program that goes into each sandbox (scripts/build-room.sh).
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
+targets = ["x86_64-unknown-linux-musl", "aarch64-unknown-linux-musl"]
+profile = "minimal"

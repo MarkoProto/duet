@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0914"><meta name="robots" content="noindex">
+<title>Duet · admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='38' cy='50' r='30' fill='none' stroke='%23ff4f8b' stroke-width='8'/%3E%3Ccircle cx='62' cy='50' r='30' fill='none' stroke='%237c5cff' stroke-width='8'/%3E%3Cpath d='M50 33 54.500 45.500 67 50 54.500 54.500 50 67 45.500 54.500 33 50 45.500 45.500z' fill='%23ffb84d'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/s/tokens.css">
+<link rel="stylesheet" href="hood.css">
+</head><body>
+<div id="wrap">
+  <header><a id="brand" href="/"><span id="brandmark"></span><b class="gradtext">Duet</b></a><span class="sub">admin · live view</span><span id="badges"></span></header>
+  <h2>Right now</h2>
+  <section id="tiles" class="tiles"></section>
+  <h2>How fast things happen</h2>
+  <section id="speed" class="tiles"></section>
+  <h2>What the AI on Nosana did</h2>
+  <section id="ai" class="tiles"></section>
+  <section id="ahead">
+    <div class="aheadtop"><h2>Rooms built ahead, in Daytona</h2><span id="batch"></span><span id="warmctl"></span></div>
+    <div id="warm" class="warmgrid"></div>
+  </section>
+  <section class="cols">
+    <div><h2>Rooms open right now</h2><div id="rooms"></div></div>
+    <div><h2>Rooms that just closed</h2><div id="recent"></div></div>
+  </section>
+  <p id="fine">People appear as initials only. Chats are never stored, so they cannot appear here.</p>
+</div>
+<script src="/s/ui.js"></script>
+<script src="hood.js"></script>
+</body></html>

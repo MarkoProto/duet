@@ -1,0 +1,19 @@
+[package]
+name = "duet-embed"
+description = "Packs web files into the binary, already compressed, and answers requests for them."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[features]
+build = ["dep:flate2", "dep:brotli"]
+
+[dependencies]
+flate2 = { version = "1.1", optional = true }
+brotli = { version = "9.1", optional = true }

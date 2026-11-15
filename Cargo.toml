@@ -1,0 +1,48 @@
+[workspace]
+resolver = "3"
+members = ["crates/embed", "crates/room", "crates/lobby"]
+# Kokodoko is a second app with its own workspace.
+exclude = ["kokodoko"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+repository = "https://github.com/MarkoProto/duet"
+publish = false
+
+# One set of lint rules for every crate. CI runs clippy with warnings as errors.
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_qualifications = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# Duet is an application, not a library: no one calls these functions from outside, so the
+# library-facing annotations and doc sections pedantic asks for would add noise, not safety.
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# Clock times, counts and scores move between integers and floats on purpose. They stay small
+# (milliseconds within a day, counts capped at 999), far from where a cast could lose anything.
+cast_possible_truncation = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+# A few functions read top to bottom as one story (a session from start to bell, the doctor's
+# checks, the pairing search). Split only where a piece has a name of its own.
+too_many_lines = "allow"
+
+# The lobby: speed first.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+
+# The room binary travels into every sandbox, so it is built small.
+[profile.room]
+inherits = "release"
+opt-level = "s"

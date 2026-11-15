@@ -1,0 +1,319 @@
+/* The room: the activity fills the stage, chat is a side booth that folds away. Layout follows Duet. */
+html,body{overflow:hidden;overscroll-behavior:none}
+#app{display:flex;height:var(--vh,100dvh)}
+#stage{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;background:var(--dusk);overflow:hidden}
+
+#top{flex:none;display:flex;align-items:center;gap:12px;padding:10px 12px 6px 14px;z-index:4;min-height:54px}
+#brand{flex:none;display:flex}
+#pair{display:flex;align-items:center;gap:7px;min-width:0;font:600 16px/1.2 var(--display)}
+#pair .names{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#pair .face+.face{margin-left:-12px;box-shadow:0 0 0 2px var(--ink)}
+#clock{margin-left:auto;flex:none;display:flex;align-items:center;gap:7px;padding:4px 12px 4px 5px;border-radius:999px;background:rgba(12,9,20,.6);border:1px solid rgba(255,255,255,.09);animation:rise-in .5s var(--out)}
+#clock svg{width:30px;height:30px;transform:rotate(-90deg)}
+#clock circle{fill:none;stroke-width:3.500}
+#clock .track{stroke:rgba(255,255,255,.14)}
+#clock .arc{stroke:url(#cg);stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+#time{font:600 17px/1 var(--display);font-variant-numeric:tabular-nums;min-width:44px}
+#clock.last{border-color:var(--amber);box-shadow:0 0 18px rgba(255,184,77,.35)}#clock.last #time{color:var(--amber)}
+#clock.last svg{animation:breathe 1s ease-in-out infinite}
+#clock+#tools{margin-left:0}
+#tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.tool{position:relative;width:38px;height:38px;display:grid;place-items:center;background:rgba(34,30,44,.92);border:1px solid rgba(255,255,255,.09);transition:border-color .15s,box-shadow .15s,background .15s;font-size:18px}
+.tool:hover{border-color:rgba(255,79,139,.75);box-shadow:0 0 16px rgba(255,79,139,.35)}
+#dot{position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:var(--alert);border:2px solid var(--ink);animation:pulse 1.4s infinite}
+
+#act{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:6px 14px;z-index:1}
+#bottom{flex:none;padding:4px 10px max(10px,env(safe-area-inset-bottom));z-index:4}
+#reactrow{display:flex;gap:2px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;touch-action:pan-x}
+#reactrow::-webkit-scrollbar{display:none}
+.emo{flex:none;font-size:22px;line-height:1;padding:7px;transition:transform .1s;user-select:none;-webkit-user-select:none}
+.emo:hover{transform:scale(1.25)}.emo:active{transform:scale(.88)}
+.action{flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;margin-left:6px;background:rgba(34,30,44,.92);border:1px solid rgba(255,255,255,.09);font-size:14px;font-weight:500;white-space:nowrap;transition:border-color .15s,box-shadow .15s}
+.action:hover{border-color:rgba(255,79,139,.75);box-shadow:0 0 16px rgba(255,79,139,.35)}
+
+#burst{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.float{position:absolute;bottom:84px;font-size:46px;line-height:1;will-change:transform,opacity;animation:rise 2.6s cubic-bezier(.2,.7,.3,1) forwards}
+.float small{display:block;margin-top:2px;font:600 12px/1.2 var(--body);text-align:center;color:#fff;text-shadow:0 1px 3px #000,0 0 2px #000}
+@keyframes rise{0%{transform:translateY(24px) scale(.4);opacity:0}12%{transform:translateY(0) scale(1.15);opacity:1}70%{opacity:1}100%{transform:translateY(-58vh) rotate(var(--r)) scale(1);opacity:0}}
+.shake{animation:shake .5s}
+#big{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;font:600 150px/1 var(--display)}
+#big span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .9s ease-out both;padding:0 .1em}
+#net{position:absolute;left:50%;top:60px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:var(--raised);border:1px solid var(--line);font-size:13px;font-weight:500;animation:toastin .3s cubic-bezier(.2,1.2,.4,1)}
+
+/* Waiting, then the hello: the stage leans away in the dark and comes forward when you are both in. */
+#veil{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;padding:16px;text-align:center;background:radial-gradient(circle at 25% 20%,rgba(255,79,139,.3),transparent 55%),radial-gradient(circle at 80% 85%,rgba(124,92,255,.38),transparent 55%),rgba(12,9,20,.93)}
+#veil>*:not(#hello){animation:rise-in .75s var(--out) backwards}
+#veilfaces{display:flex;align-items:center;gap:18px}
+#veilfaces .ghost{width:72px;height:72px;border-radius:50%;border:2.500px dashed var(--line);animation:spin 9s linear infinite}
+#veilfaces .amp{font:600 26px var(--display);color:var(--muted)}
+#veil h1{font:600 clamp(22px,4.500vw,30px)/1.15 var(--display);text-wrap:balance}
+#veilsub{color:var(--muted);max-width:340px;text-wrap:balance}
+#hello{display:none;position:absolute;left:16px;right:16px;top:50%;transform:translateY(-50%);font:600 clamp(40px,8vw,76px)/1.05 var(--display);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;overflow-wrap:anywhere}
+#veil.hi>*:not(#hello){opacity:0;transform:translateY(-12px) scale(.97);transition:opacity .22s,transform .22s}
+#veil.hi #hello{display:block;animation:hello .5s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes hello{from{opacity:0;transform:translateY(-50%) scale(.82)}to{opacity:1;transform:translateY(-50%)}}
+#veil.through{animation:through .7s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+@keyframes through{to{opacity:0;transform:scale(1.24)}}
+.gated #act{transform:perspective(1200px) rotateX(10deg) scale(.8);opacity:.4}
+.gated #bottom,.gated #clock{opacity:0;pointer-events:none}
+.entering #act{transition:transform 1s var(--out),opacity .6s ease-out}
+.entering #bottom,.entering #clock{transition:opacity .55s ease-out .4s}
+
+/* Chat booth */
+#chat{width:340px;flex:none;position:relative;overflow:hidden;transition:width .38s cubic-bezier(.2,.9,.3,1);display:flex;flex-direction:column;background:radial-gradient(120% 40% at 100% 0,rgba(124,92,255,.24),transparent),radial-gradient(120% 40% at 0 100%,rgba(255,79,139,.16),transparent),var(--booth);border-left:1px solid var(--line);min-height:0}
+#chat>*{min-width:339px}
+.folded #chat{width:0;border-left-width:0;visibility:hidden;transition:width .38s cubic-bezier(.2,.9,.3,1),visibility 0s .38s}
+#head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+#head b{font:600 19px/1.2 var(--display)}
+#where{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:13px;color:var(--muted)}
+#log{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:12px;display:flex;flex-direction:column;gap:5px}
+#empty{margin:auto;color:var(--muted);text-align:center;padding:16px;text-wrap:balance}
+.m{position:relative;max-width:84%;padding:7px 11px;border-radius:14px 14px 14px 4px;background:var(--raised);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap;transform-origin:0 100%;animation:msgin .34s var(--spring);touch-action:pan-y}
+.m.mine{transform-origin:100% 100%}
+@keyframes msgin{from{opacity:0;transform:translateY(8px) scale(.82)}}
+.m.mine{background:var(--mine);box-shadow:0 3px 14px rgba(124,60,240,.3);align-self:flex-end;border-radius:14px 14px 4px 14px}
+.m.big{font-size:34px;line-height:1.15;background:none;box-shadow:none;padding:2px;animation:bigin .4s var(--spring)}
+@keyframes bigin{from{opacity:0;transform:scale(.3)}}
+.m.pending{opacity:.6}.m.failed{background:#6e2323;cursor:pointer}.m.failed::after{content:attr(data-fail);display:block;font-size:12px;opacity:.85}
+.m.flash{animation:flash 1.1s ease-out}@keyframes flash{0%,35%{box-shadow:0 0 0 3px var(--amber)}}
+.who{display:block;margin-bottom:1px;font-size:12px;font-weight:600;color:var(--who)}.m.same .who,.m.mine .who{display:none}
+@media(pointer:coarse){.m{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}}
+.quote{display:block;width:100%;margin:2px 0 5px;padding:4px 9px;border-left:4px solid var(--who);border-radius:7px;background:rgba(8,5,16,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);text-align:left;font-size:12px;line-height:1.3;color:#e9e3f5;white-space:normal}
+.quote b{display:block;font-weight:600;color:var(--who)}.quote span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.m.hasrx{margin-bottom:15px;padding-bottom:12px}.m.hasrx.big{padding-bottom:10px}
+.rxs{position:absolute;right:8px;bottom:0;z-index:1;transform:translateY(50%);display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;width:max-content;max-width:min(250px,84vw)}
+.rx{padding:1px 7px;border-radius:999px;background:var(--raised);border:1px solid var(--line);font-size:13px;line-height:18px;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.45);transition:border-color .15s,transform .12s}.rx:hover{border-color:var(--pink);transform:translateY(-1px)}
+.rx.on{background:linear-gradient(115deg,rgba(255,184,77,.38),rgba(255,79,139,.38) 52%,rgba(124,92,255,.42)),var(--raised);border-color:var(--amber)}
+.rx.fresh{animation:rxin .32s cubic-bezier(.2,1.7,.4,1)}@keyframes rxin{from{opacity:0;transform:scale(.3)}}
+.sysline{align-self:center;max-width:90%;padding:2px 10px;font-size:12px;color:var(--muted);text-align:center;overflow-wrap:anywhere;animation:in .25s ease-out}
+.hostcard{align-self:stretch;padding:10px 12px;border-radius:14px;border:1.500px solid transparent;background:linear-gradient(var(--raised),var(--raised)) padding-box,var(--grad) border-box;box-shadow:0 6px 22px rgba(255,79,139,.18);animation:cardin .45s cubic-bezier(.2,1.25,.4,1) both;overflow-wrap:anywhere}
+.hostcard small{display:inline-block;margin-bottom:4px;font-size:11px;font-weight:600;letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--grad);color:var(--on-grad)}
+.hostcard p{font:600 15px/1.3 var(--display)}
+.sysline.going,.hostcard.going{animation:notice-out .45s ease forwards}
+@keyframes notice-out{to{opacity:0;transform:translateY(-6px) scale(.98)}}
+#latest{position:absolute;left:50%;bottom:74px;transform:translateX(-50%);min-width:0!important;z-index:2;background:var(--grad);color:var(--on-grad);font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.4);animation:rise-in .25s var(--out)}
+#typing{flex:none;height:20px;padding:0 14px;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden}
+#typing i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--muted);margin-right:3px;animation:bob 1s infinite}
+#typing i:nth-child(2){animation-delay:.15s}#typing i:nth-child(3){animation-delay:.3s}
+#replybar{--who:var(--muted);flex:none;display:flex;align-items:center;gap:8px;margin:0 12px 6px;min-width:0!important;padding:5px 6px 5px 10px;border-left:3px solid var(--who);border-radius:8px;background:var(--raised);font-size:12px;line-height:1.3;animation:in .18s ease-out}
+#replybar div{flex:1;min-width:0}#replybar b{display:block;font-weight:600;color:var(--who)}#replybar span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#replyclose{flex:none;padding:4px 8px;color:var(--muted)}#replyclose:hover{color:var(--text);background:var(--line)}
+#f{flex:none;position:relative;display:flex;align-items:flex-end;gap:6px;padding:8px 12px max(12px,env(safe-area-inset-bottom))}
+#f>button{height:41px;flex:none}#emo{width:41px;background:var(--raised);border-color:var(--line)}
+#t{flex:1;min-width:0;display:block;height:41px;max-height:125px;resize:none;overflow-y:auto;scrollbar-width:thin;background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:16px}
+#t::placeholder{color:var(--muted)}
+#t:focus{outline:0;border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,79,139,.22)}
+#send{width:44px;display:grid;place-items:center;background:var(--grad);color:var(--on-grad);border-radius:10px;transition:transform .12s}#send:hover{transform:scale(1.07)}#send:active{transform:scale(.92)}
+
+#msgmenu{position:fixed;z-index:50;display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,.5);animation:sheet .14s ease-out}
+#msgemoji{display:flex;margin-bottom:2px}#msgemoji .emo{font-size:21px;padding:6px}#msgemoji .emo.on{background:var(--grad-soft);box-shadow:inset 0 0 0 1px var(--amber);border-radius:9px}
+#msgreply,#msgcopy{padding:8px 10px;border-radius:9px;font-size:14px;text-align:left}#msgreply:hover,#msgcopy:hover{background:var(--line)}
+#picker{position:fixed;z-index:51;width:310px;max-width:calc(100vw - 20px);max-height:260px;overflow:auto;overscroll-behavior:contain;background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;grid-template-columns:repeat(8,1fr);gap:1px;box-shadow:0 12px 34px rgba(0,0,0,.5);animation:sheet .16s ease-out}
+#picker .emo{padding:5px 0;font-size:22px}
+
+.sheet{position:absolute;top:54px;right:12px;z-index:9;width:min(250px,calc(100% - 24px));display:flex;flex-direction:column;padding:6px;background:var(--raised);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.5);animation:sheet .28s var(--out);transform-origin:90% 0}
+.sheet button{display:flex;align-items:center;gap:9px;text-align:left;padding:10px 11px;font-size:15px}.sheet .ic{width:17px;height:17px}.action .ic{width:16px;height:16px}.sheet button:hover{background:var(--line)}
+.sheet button.warn{color:#ffc2cc}
+.sheet .seg{display:flex;gap:4px;padding:4px}.sheet .seg button{flex:1;justify-content:center;text-align:center;padding:7px;border:1px solid var(--line);font-size:14px}.sheet .seg button.now{background:#fff;border-color:#fff;color:#0c0914;font-weight:600}
+#modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,3,10,.72);animation:fade .2s}
+#modalbox{width:min(400px,100%);max-height:100%;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px;animation:cardin .4s cubic-bezier(.2,1.25,.4,1) both}
+#modalbox h2{font:600 22px/1.2 var(--display);text-wrap:balance}
+#modalbox p{color:var(--muted);font-size:14px}
+#modalbox .chips{display:flex;flex-wrap:wrap;gap:6px}
+#modalbox textarea{width:100%;min-height:64px;resize:vertical;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:16px}
+#modalbox textarea:focus{outline:0;border-color:var(--pink)}
+#modalbox .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* The end: the rings drift apart, the colour drains, the spark falls. */
+#done{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;padding:20px;text-align:center;font:600 26px/1.2 var(--display);background:radial-gradient(circle at 50% 38%,rgba(124,92,255,.16),transparent 62%),var(--ink);animation:fade .5s}
+#done svg{width:112px;height:112px;overflow:visible;animation:drain 2.800s ease-in-out .2s both}
+#done .ring{transform-box:fill-box;transform-origin:center}#done .r1{animation:partl 2.400s cubic-bezier(.4,0,.3,1) .3s both}#done .r2{animation:partr 2.400s cubic-bezier(.4,0,.3,1) .3s both}
+#done .spark{transform-box:fill-box;transform-origin:center;animation:sparkfall 1.600s cubic-bezier(.5,0,.8,.5) .5s both}
+#donetext{animation:word 1s ease-out .5s both;text-wrap:balance}
+#done small{font:400 15px/1.4 var(--body);color:var(--muted);animation:word 1s ease-out 1.300s both;max-width:340px;text-wrap:balance}
+#doneback{animation:word .6s ease-out both;text-decoration:none}
+@keyframes drain{to{filter:grayscale(.82) brightness(.72);transform:translateY(8px)}}
+@keyframes partl{to{transform:translate(-24px,5px) rotate(-7deg)}}@keyframes partr{to{transform:translate(24px,5px) rotate(7deg)}}
+@keyframes sparkfall{22%{transform:rotate(24deg)}100%{transform:translateY(46px) rotate(78deg);opacity:0}}
+@keyframes word{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Shared by the activities */
+.actbox{width:min(560px,100%);max-height:100%;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.acttitle{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hud{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.pill .ic{width:14px;height:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:rgba(12,9,20,.6);border:1px solid rgba(255,255,255,.09);font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.pill.good{border-color:var(--ok);color:var(--ok)}.pill.hot{border-color:var(--amber);color:var(--amber)}
+
+/* Same Wavelength */
+.wl .prompt{font:600 clamp(20px,3.600vw,30px)/1.2 var(--display);text-wrap:balance;animation:cardin .5s cubic-bezier(.2,1.25,.4,1) both}
+.wl form{display:flex;gap:8px;width:min(420px,100%)}
+.wl .input{font-size:19px;padding:11px 14px}
+.wl .btn,.tt .btn{padding:11px 18px;font-size:16px;flex:none}
+.wl .status,.tt .status{min-height:22px;color:var(--muted);font-size:14px}
+.wl .pair,.tt .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.wl .ans,.tt .ans{padding:12px;border-radius:14px;background:var(--raised);border:1px solid var(--line);min-width:0;animation:flip .6s cubic-bezier(.2,1.2,.4,1) both}
+.wl .ans:nth-child(2),.tt .ans:nth-child(2){animation-delay:.12s}
+.wl .ans small,.tt .ans small{display:block;font-size:12px;font-weight:600;color:var(--who);margin-bottom:2px}
+.wl .ans b,.tt .ans b{font:600 clamp(17px,3vw,22px)/1.2 var(--display);overflow-wrap:anywhere}
+.wl .ans.sync,.tt .ans.sync{border-color:var(--amber);box-shadow:0 0 22px rgba(255,184,77,.45)}
+@keyframes flip{from{opacity:0;transform:perspective(600px) rotateX(-70deg) translateY(14px)}}
+.wl .verdict,.tt .verdict{font:600 20px var(--display);animation:pop .7s ease-out both}
+
+/* Four Hands */
+.sk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 8px 2px}
+.sk .bar{flex:none;display:flex;align-items:center;gap:8px;max-width:100%;font-size:14px}
+.sk .bar b{font:600 16px/1.2 var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.sk .paper{flex:1;min-height:0;width:100%;position:relative;display:flex;align-items:center;justify-content:center}
+.sk .sheetbox{position:relative;border-radius:14px;overflow:hidden;background:#120e1f;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.45);touch-action:none;cursor:crosshair}
+.sk .turn{flex:none}.sk .turn.nudge{animation:shake .35s}.sk .sheetbox.wait{cursor:not-allowed}
+.sk canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sk .tools{flex:none;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+.sk .sw{width:26px;height:26px;border-radius:50%;background:var(--c);border:2px solid var(--ink);box-shadow:0 0 0 1.500px var(--line);transition:transform .15s,box-shadow .15s}
+.sk .sw:hover{transform:scale(1.12)}.sk .sw.now{box-shadow:0 0 0 2.500px #fff}
+.sk .wd{width:30px;height:26px;display:grid;place-items:center;border-radius:8px;border:1px solid var(--line);background:var(--ink)}.sk .wd i{display:block;border-radius:50%;background:var(--text);width:var(--d);height:var(--d)}.sk .wd.now{border-color:var(--pink);background:var(--grad-soft)}
+.sk .mini{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--ink);font-size:13px;font-weight:500}.sk .mini .ic{width:14px;height:14px}.sk .mini:hover{border-color:var(--pink)}
+
+/* Signal */
+.sg .grid{display:grid;gap:5px;width:min(100%,var(--side,360px));aspect-ratio:1;touch-action:manipulation}
+.sg .cell{position:relative;border-radius:22%;background:rgba(37,29,59,.85);border:1px solid var(--line);transition:transform .12s,background .2s,border-color .2s,box-shadow .2s;padding:0}
+.sg .cell.can{border-color:rgba(255,184,77,.7);box-shadow:0 0 12px rgba(255,184,77,.28)}
+.sg .cell.can:hover{transform:scale(1.06)}
+.sg .cell.path{background:linear-gradient(135deg,rgba(255,184,77,.5),rgba(255,79,139,.5))}
+.sg .cell.trail{background:var(--grad-soft);border-color:var(--pink)}
+.sg .cell.goal::after{content:"★";position:absolute;inset:0;display:grid;place-items:center;color:var(--amber);font-size:min(4vw,20px)}
+.sg .cell.here{border-color:#fff;box-shadow:0 0 16px rgba(255,255,255,.5)}
+.sg .cell.here::before{content:"";position:absolute;inset:22%;border-radius:50%;background:var(--who);animation:facein .3s var(--spring)}
+.sg .cell.zap{animation:zap .5s}
+@keyframes zap{0%{background:var(--alert);transform:scale(1.15)}100%{transform:scale(1)}}
+.sg .cell .ring{position:absolute;inset:-30%;border:3px solid var(--amber);border-radius:50%;pointer-events:none;animation:ping 1.100s ease-out 2 both}
+@keyframes ping{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.2);opacity:0}}
+.sg .role{font:600 clamp(16px,2.800vw,20px)/1.25 var(--display);text-wrap:balance;min-height:2.500em;display:flex;align-items:center}
+.sg.tight{gap:7px}.sg.tight .acttitle{display:none}.sg.tight .role{font-size:15px;min-height:0}
+
+/* Phones, upright: the activity on top, the reactions under it, chat below. */
+@media(max-width:760px) and (orientation:portrait){
+  #app{flex-direction:column}
+  #stage{flex:1 1 56%;min-height:0}
+  #chat{width:100%;flex:1 1 44%;border-left:0;border-top:1px solid var(--line);transition:none}
+  #chat>*{min-width:0}
+  .folded #chat{display:none}
+  .kb #stage{flex-basis:34%}.kb #chat{flex-basis:66%}
+  .kb .acting #stage{flex-basis:72%}.kb .acting #chat{flex-basis:28%}
+  .kb #bottom{display:none}
+  #top{min-height:46px;padding:6px 10px 2px 12px}
+  #pair .names{display:none}
+  #head{display:none}
+  .float{font-size:38px;bottom:64px}#big{font-size:100px}
+  .emo{font-size:21px;padding:6px}
+  #log{padding:8px 10px}
+  .sheet{position:fixed;left:8px;right:8px;top:8px;width:auto;z-index:40}
+  /* A game taller than its space scrolls inside it, never under the reactions bar. */
+  .actbox{overflow-y:auto;overscroll-behavior:contain}
+  #act .tt .vs{flex-wrap:nowrap}#act .tt .opt{flex:1 1 0;min-width:0;min-height:64px;padding:10px 12px}
+}
+@media(max-width:760px) and (orientation:landscape),(pointer:coarse) and (max-height:500px){
+  #chat{width:min(42%,300px)}#chat>*{min-width:0}
+  #head{display:none}
+}
+
+/* This or That */
+.tt .vs{display:flex;gap:10px;align-items:stretch;justify-content:center;width:100%;flex-wrap:wrap}
+.tt .vs>span{align-self:center;color:var(--muted);font-size:14px}
+.tt .opt{flex:1 1 180px;min-height:88px;padding:14px;border-radius:16px;background:var(--raised);border:1.5px solid var(--line);color:inherit;font:600 clamp(17px,3vw,22px)/1.2 var(--display);cursor:pointer;transition:transform .15s,border-color .2s;animation:cardin .5s cubic-bezier(.2,1.25,.4,1) both}
+.tt .opt:nth-of-type(2){animation-delay:.08s}
+.tt .opt:hover:not(:disabled){transform:translateY(-2px)}
+.tt .opt.now{border-color:transparent;background:linear-gradient(var(--raised),var(--raised)) padding-box,var(--grad) border-box;box-shadow:0 6px 22px rgba(255,79,139,.25)}
+.tt .opt:disabled{cursor:default;opacity:.7}
+
+/* Tale for Two */
+.actbox.st{width:min(620px,100%);height:100%}
+.st .tale{flex:1;min-height:0;width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:8px;text-align:left;padding:4px 2px}
+.st .line{padding:10px 12px;border-radius:14px;background:var(--raised);border:1px solid var(--line);font-size:16px;line-height:1.35;animation:cardin .4s cubic-bezier(.2,1.25,.4,1) both;overflow-wrap:anywhere}
+.st .line small{display:block;font-size:12px;font-weight:600;color:var(--who);margin-bottom:2px}
+.st .line.host{font:600 17px/1.35 var(--display);border-color:transparent;background:linear-gradient(var(--raised),var(--raised)) padding-box,var(--grad) border-box}
+.st .line.twist{align-self:center;text-align:center;border-style:dashed;border-color:var(--amber);color:var(--amber);font-weight:600}
+.st .line.twist small{color:var(--amber)}
+.st form{display:flex;gap:8px;width:100%;flex:none}
+.st .input{font-size:17px;padding:11px 14px}
+.st .btn{padding:11px 16px;font-size:15px;flex:none}
+.st .turn.nudge{animation:shake .35s}
+
+/* Signs, from Duet the watch-party app */
+/* A sign on its own in a message becomes a small moving picture, each moving in its own way. A light edge keeps it readable on the booth's gradient. Transforms only. */
+.m.sign{position:relative;padding:2px 4px}
+.signart{display:block;width:48px;height:48px;transition:width .5s cubic-bezier(.2,.9,.3,1),height .5s cubic-bezier(.2,.9,.3,1);animation:signin .5s cubic-bezier(.2,1.6,.4,1) both}.m.mine .signart{margin-left:auto}
+/* They play for a moment when they arrive, then settle small and still, so the chat does not pull eyes off the film. */
+.signart.settled{width:26px;height:26px}.signart.settled,.signart.settled svg,.signart.settled svg *{animation:none!important}
+.signart svg{width:100%;height:100%;overflow:visible;fill:none}.signart svg *{transform-box:fill-box;transform-origin:center}
+.signart text{font:700 60px var(--display);text-anchor:middle;fill:url(#sg-sun);stroke:#fff;stroke-width:2.5px;paint-order:stroke}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@keyframes signin{from{opacity:0;transform:scale(.3)}}
+.heart svg{animation:beat 1.6s ease-in-out infinite}
+@keyframes beat{0%,36%,100%{transform:scale(1)}10%{transform:scale(1.2)}20%{transform:scale(1.02)}28%{transform:scale(1.14)}}
+.broken .hl{animation:partleft 2.6s ease-in-out infinite}.broken .hr{animation:partright 2.6s ease-in-out infinite}
+@keyframes partleft{0%,20%,100%{transform:none}55%,80%{transform:translate(-5px,3px) rotate(-9deg)}}
+@keyframes partright{0%,20%,100%{transform:none}55%,80%{transform:translate(5px,5px) rotate(9deg)}}
+.question svg{transform-origin:50% 90%;animation:wonder 2.4s ease-in-out infinite}
+@keyframes wonder{0%,100%{transform:rotate(-11deg) translateY(0)}50%{transform:rotate(11deg) translateY(-4px)}}
+.bang svg{transform-origin:50% 95%;animation:jolt 1.5s cubic-bezier(.3,1.6,.5,1) infinite}
+@keyframes jolt{0%,55%,100%{transform:none}12%{transform:translateY(-7px) scale(1.14,1.14)}22%{transform:translateY(0) scale(1.1,.9)}32%{transform:rotate(-7deg)}42%{transform:rotate(6deg)}}
+.wat .w1{animation:swapa 1.5s ease-in-out infinite}.wat .w2{animation:swapb 1.5s ease-in-out infinite}
+@keyframes swapa{0%,100%{transform:scale(1.14) rotate(-7deg)}50%{transform:scale(.88)}}@keyframes swapb{0%,100%{transform:scale(.88)}50%{transform:scale(1.14) rotate(7deg)}}
+.smile svg{animation:hop 1.3s cubic-bezier(.3,0,.5,1) infinite}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1.03,.97)}45%{transform:translateY(-8px) scale(.98,1.02)}}
+.laugh svg{animation:giggle .42s ease-in-out infinite}
+@keyframes giggle{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg) translateY(-2px)}}
+.sad svg{animation:sigh 3s ease-in-out infinite}.sad .tear{animation:falltear 2.2s ease-in infinite}
+@keyframes sigh{0%,100%{transform:translateY(0)}50%{transform:translateY(3px) rotate(-3deg)}}@keyframes falltear{0%,30%{transform:none;opacity:0}40%{opacity:1}90%{transform:translateY(16px);opacity:1}100%{transform:translateY(20px);opacity:0}}
+.wink .lid{animation:blink 2.2s ease-in-out infinite}.wink svg{animation:lean 2.2s ease-in-out infinite}
+@keyframes blink{0%,62%,86%,100%{transform:scaleY(1)}70%,78%{transform:scaleY(.1)}}@keyframes lean{0%,62%,86%,100%{transform:none}70%,78%{transform:rotate(7deg)}}
+.tongue .lick{animation:lick 1s ease-in-out infinite;transform-origin:50% 0}
+@keyframes lick{0%,100%{transform:scaleY(.72)}50%{transform:scaleY(1.15) rotate(5deg)}}
+.signart text.small{font:700 17px var(--display);fill:#14702f;stroke:none}.signart text.z{font:700 15px var(--display);fill:#fff;stroke:#1a0b1e;stroke-width:1.5px}.signart text.ask{font:700 18px var(--display);fill:#fff;stroke:#1a0b1e;stroke-width:1.5px}
+.cry svg{animation:s-sob .8s ease-in-out infinite}.cry .stream{transform-origin:50% 0;animation:s-flow 1s ease-in-out infinite}.cry .s2{animation-delay:.25s}
+@keyframes s-sob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}@keyframes s-flow{0%,100%{transform:scaleY(.72)}50%{transform:scaleY(1.1)}}
+.flat .sweat{animation:s-slide 2.4s ease-in infinite}@keyframes s-slide{0%,25%{transform:none;opacity:0}35%{opacity:1}85%{transform:translateY(12px);opacity:1}100%{transform:translateY(15px);opacity:0}}
+.unsure svg{animation:s-tilt 2.6s ease-in-out infinite}@keyframes s-tilt{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+.wow .gape{animation:s-gape 1.2s cubic-bezier(.3,1.5,.5,1) infinite}.wow .pop{animation:s-eyes 1.2s cubic-bezier(.3,1.5,.5,1) infinite}@keyframes s-gape{0%,100%{transform:scale(.72)}45%{transform:scale(1.2)}}@keyframes s-eyes{0%,100%{transform:scale(.85)}45%{transform:scale(1.25)}}
+.confused svg{animation:s-puzzle 2.2s ease-in-out infinite}.confused .ask{animation:s-askbob 1.1s ease-in-out infinite}@keyframes s-puzzle{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-5deg) translateX(-2px)}}@keyframes s-askbob{50%{transform:translateY(-5px) rotate(12deg)}}
+.happy svg{animation:s-sway 1.5s ease-in-out infinite}@keyframes s-sway{0%,100%{transform:translateX(-3px) rotate(-6deg)}50%{transform:translateX(3px) rotate(6deg) translateY(-3px)}}
+.cute svg{animation:s-squish 1.4s ease-in-out infinite}.cute .cheek{animation:s-blush 1.4s ease-in-out infinite}@keyframes s-squish{0%,100%{transform:scale(1.05,.95)}50%{transform:scale(.97,1.04) translateY(-2px)}}@keyframes s-blush{0%,100%{opacity:.45}50%{opacity:.95}}
+.angry svg{animation:s-rage .22s linear infinite}.angry .steam{animation:s-steam 1s ease-out infinite}@keyframes s-rage{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}@keyframes s-steam{0%{transform:scale(.4);opacity:.9}100%{transform:translateY(-10px) scale(1.2);opacity:0}}
+.pain svg{animation:s-clench .55s ease-in-out infinite}@keyframes s-clench{0%,100%{transform:scale(1)}50%{transform:scale(1.1,.88)}}
+.dead svg{transform-origin:50% 90%;animation:s-faint 2.6s ease-in-out infinite}@keyframes s-faint{0%,30%,100%{transform:rotate(0)}60%,85%{transform:rotate(24deg) translateY(4px)}}
+.kiss .puff{animation:s-puff 1.7s ease-out infinite}@keyframes s-puff{0%{transform:scale(.3);opacity:0}20%{opacity:1}100%{transform:translate(9px,-20px) scale(1.15);opacity:0}}
+.cool .glint{animation:s-glint 2.2s ease-in-out infinite}.cool svg{animation:s-nod 2.2s ease-in-out infinite}@keyframes s-glint{0%,45%{transform:translateX(-14px);opacity:0}55%{opacity:.95}75%,100%{transform:translateX(26px);opacity:0}}@keyframes s-nod{50%{transform:translateY(2px)}}
+.shock svg{animation:s-tremble .13s linear infinite}@keyframes s-tremble{0%,100%{transform:translate(0,0)}25%{transform:translate(-1.500px,1px)}75%{transform:translate(1.500px,-1px)}}
+.dizzy .whirl{animation:s-spin 1s linear infinite}.dizzy svg{animation:s-woozy 2s ease-in-out infinite}@keyframes s-spin{to{transform:rotate(360deg)}}@keyframes s-woozy{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.stars .twink{animation:s-twink 1.1s ease-in-out infinite}.stars .t2{animation-delay:.3s}@keyframes s-twink{0%,100%{transform:scale(.8) rotate(-12deg)}50%{transform:scale(1.28) rotate(12deg)}}
+.money .small{animation:s-cash .7s steps(2) infinite}@keyframes s-cash{0%{transform:translateY(-1.500px)}100%{transform:translateY(1.500px)}}
+.sleepy .z{animation:s-zed 2.1s ease-out infinite}.sleepy .z2{animation-delay:.7s}.sleepy svg{animation:s-breathe 2.1s ease-in-out infinite}@keyframes s-zed{0%{transform:scale(.4);opacity:0}25%{opacity:1}100%{transform:translate(9px,-15px) scale(1.2);opacity:0}}@keyframes s-breathe{50%{transform:scale(1.04)}}
+.think .bub{animation:s-bub 1.5s ease-in-out infinite}.think .b2{animation-delay:.2s}.think .b3{animation-delay:.4s}@keyframes s-bub{0%,100%{opacity:.2;transform:scale(.7)}40%{opacity:1;transform:scale(1.1)}}
+.cheer svg{animation:s-jump .75s cubic-bezier(.3,0,.5,1) infinite}.cheer .arms{animation:s-arms .375s ease-in-out infinite alternate}@keyframes s-jump{0%,100%{transform:translateY(3px)}50%{transform:translateY(-8px)}}@keyframes s-arms{from{transform:scaleY(.82)}to{transform:scaleY(1.1)}}
+.signart text.pop{font:800 14px var(--display);fill:url(#sg-sun);stroke:#fff;stroke-width:2.500px;paint-order:stroke}.signart .paw{stroke:#1a0b1e;stroke-width:2}
+.haha svg{animation:giggle .42s ease-in-out infinite}.haha .pop{animation:s-pop 1s ease-out infinite}.haha .p2{animation-delay:-.5s}
+.hihi svg{animation:s-titter .3s ease-in-out infinite}.hihi .paw{animation:s-paw .3s ease-in-out infinite}.hihi .cheek{animation:s-blush 1.4s ease-in-out infinite}.hihi .pop{animation:s-pop .8s ease-out infinite}.hihi .p2{animation-delay:-.4s}
+.hoho svg{animation:s-jolly .9s cubic-bezier(.3,0,.5,1) infinite}.hoho .oh{animation:s-oh .9s cubic-bezier(.3,0,.5,1) infinite}.hoho .pop{animation:s-rise 1.8s ease-out infinite}.hoho .p2{animation-delay:-.9s}
+@keyframes s-pop{0%{transform:translateY(5px) scale(.3);opacity:0}25%{transform:none;opacity:1}70%{opacity:1}100%{transform:translateY(-7px);opacity:0}}@keyframes s-titter{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-2px) rotate(3deg)}}@keyframes s-paw{0%,100%{transform:none}50%{transform:translateY(1.500px)}}
+@keyframes s-jolly{0%,100%{transform:translateY(0) scale(1.05,.95)}40%{transform:translateY(-7px) scale(.97,1.04)}}@keyframes s-oh{0%,100%{transform:scale(1,.75)}40%{transform:scale(1,1.15)}}@keyframes s-rise{0%{transform:translateY(8px) scale(.5);opacity:0}20%{opacity:1;transform:translateY(0) scale(1.1)}75%{opacity:1}100%{transform:translateY(-10px);opacity:0}}
+.wave .arm{transform-origin:0% 100%;animation:s-wave .55s ease-in-out infinite alternate}@keyframes s-wave{from{transform:rotate(-16deg)}to{transform:rotate(24deg)}}
+@media(prefers-reduced-motion:reduce){.signart,.signart svg,.signart svg *{animation:none!important}}
+
+/* Changing the game: the games still to play, one button each */
+.games{display:flex;flex-direction:column;gap:8px;width:100%}
+.game{display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 14px;border-radius:14px;background:var(--ink);border:1px solid var(--line);color:inherit;cursor:pointer;transition:border-color .15s,transform .12s}
+.game:hover{border-color:var(--pink)}.game:active{transform:scale(.98)}
+.game b{font:600 16px var(--display)}.game span{font-size:13px;color:var(--muted)}
+
+/* How to play: a card over the game before it starts */
+.tut{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(12,9,20,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:fade .25s ease-out}
+.tut.going{opacity:0;transition:opacity .2s}
+.tutcard{width:min(440px,100%);display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 22px;border-radius:20px;text-align:center;border:1.500px solid transparent;background:linear-gradient(var(--raised),var(--raised)) padding-box,var(--grad) border-box;box-shadow:0 16px 48px rgba(0,0,0,.45);animation:cardin .45s cubic-bezier(.2,1.25,.4,1) both}
+.tutcard small{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tutcard h2{font:600 clamp(22px,4vw,28px)/1.15 var(--display)}
+.tuttext{font-size:17px;line-height:1.45;min-height:4.4em;text-wrap:pretty}
+.tutdots{display:flex;gap:7px}.tutdots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}.tutdots i.now{background:var(--pink);transform:scale(1.25)}
+.tutcard .btn{min-width:150px}
+@media(prefers-reduced-motion:reduce){.tut,.tutcard{animation:none}}
+

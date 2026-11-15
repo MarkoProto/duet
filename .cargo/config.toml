@@ -1,0 +1,9 @@
+# The room binary is built for Linux from this Mac. It contains no C code, so the linker that
+# ships with Rust is enough: no Docker, no cross toolchain.
+[target.x86_64-unknown-linux-musl]
+linker = "rust-lld"
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-unknown-linux-musl]
+linker = "rust-lld"
+rustflags = ["-C", "target-feature=+crt-static"]

@@ -1,0 +1,102 @@
+/* Duet's look: a cinema at dusk. Near-black ink, a booth panel, and a sunset gradient on everything you can touch.
+   Only transforms and opacity move, so phones stay smooth. */
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/bricolage-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/bricolage-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/figtree-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/figtree-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+:root{
+  color-scheme:dark;
+  --ink:#0c0914;--booth:#171228;--raised:#251d3b;--line:#3a2f57;
+  --text:#f4f0fb;--muted:#ada4c4;--amber:#ffb84d;--pink:#ff4f8b;--violet:#7c5cff;--on-grad:#1a0b1e;--alert:#ff3b5c;--ok:#4cd98a;
+  --grad:linear-gradient(115deg,#ffb84d,#ff4f8b 52%,#7c5cff);
+  --grad-soft:linear-gradient(115deg,rgba(255,184,77,.22),rgba(255,79,139,.22) 52%,rgba(124,92,255,.26));
+  --mine:linear-gradient(135deg,#6a3df0,#c23aa3);
+  --dusk:radial-gradient(circle at 22% 18%,rgba(255,79,139,.30),transparent 55%),radial-gradient(circle at 82% 86%,rgba(124,92,255,.38),transparent 55%),radial-gradient(circle at 72% 14%,rgba(255,184,77,.16),transparent 42%),var(--ink);
+  --display:"Bricolage Grotesque","Hiragino Sans","Yu Gothic UI","Noto Sans JP",ui-rounded,system-ui,sans-serif;
+  --body:"Figtree","Hiragino Sans","Yu Gothic UI","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --out:cubic-bezier(.16,1,.3,1);--spring:cubic-bezier(.2,1.5,.4,1);--pop:cubic-bezier(.2,.9,.3,1.2);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ink);color:var(--text);font:15px/1.4 var(--body);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;border-radius:9px;touch-action:manipulation;padding:0}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+[hidden]{display:none!important}
+svg{display:block}
+.icon svg,svg.i{width:20px;height:20px;fill:currentColor;pointer-events:none}
+h1,h2,p{margin:0}
+
+/* The main button: the gradient, a glow, a small lift. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--grad);color:var(--on-grad);font-weight:600;font-size:17px;padding:13px 28px;border-radius:12px;box-shadow:0 8px 30px rgba(255,79,139,.4);transition:transform .15s,box-shadow .15s,opacity .25s;user-select:none;-webkit-user-select:none}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 38px rgba(255,79,139,.6)}
+.btn:active{transform:scale(.97)}
+.btn:disabled,.btn.off{opacity:.45;box-shadow:none;cursor:default;transform:none}
+.btn.wide{width:100%}
+.btn.quiet{background:rgba(34,30,44,.92);color:var(--text);font-weight:500;font-size:15px;padding:10px 16px;border:1px solid rgba(255,255,255,.09);box-shadow:none}
+.btn.quiet:hover{border-color:rgba(255,79,139,.75);box-shadow:0 0 16px rgba(255,79,139,.35);transform:none}
+.btn.danger{background:var(--alert);color:#fff;box-shadow:0 8px 26px rgba(255,59,92,.35)}
+.link{color:var(--muted);font-size:14px;padding:6px 10px;text-decoration:none}.link:hover{color:var(--text)}
+
+.input{width:100%;font:600 22px/1.2 var(--display);text-align:center;padding:13px 16px;border-radius:14px;background:rgba(12,9,20,.7);border:1.5px solid var(--line);transition:border-color .2s,box-shadow .25s}
+.input::placeholder{color:var(--muted);font-weight:600}
+.input:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,79,139,.16),0 0 28px rgba(255,79,139,.28)}
+.input.wrong{animation:wiggle .38s}
+
+.chip{padding:8px 14px;border-radius:999px;background:var(--ink);border:1px solid var(--line);font-size:15px;font-weight:500;overflow-wrap:anywhere;text-align:left;transition:border-color .15s,background .15s,transform .12s}
+.chip:hover{border-color:var(--pink)}.chip:active{transform:scale(.96)}
+.chip{display:inline-flex;align-items:center;gap:7px}.chip .ic{width:17px;height:17px}
+/* Chosen: the negative of itself, black on white. */
+.chip.now{background:#fff;border-color:#fff;color:#0c0914;font-weight:600}
+
+.card{background:var(--raised);border:1px solid var(--line);border-radius:16px}
+.card.lit{border:1.5px solid transparent;background:linear-gradient(var(--raised),var(--raised)) padding-box,var(--grad) border-box;box-shadow:0 6px 22px rgba(255,79,139,.18)}
+
+.gradtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font:500 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.spin{width:44px;height:44px;border-radius:50%;background:conic-gradient(transparent 0 15%,#ffb84d,#ff4f8b 60%,#7c5cff);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));animation:spin .9s linear infinite}
+.spin.small{width:18px;height:18px;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px))}
+
+.face{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:600 13px/1 var(--display);color:var(--on-grad);background:var(--who,var(--amber));animation:facein .45s var(--spring)}
+.face.big{width:72px;height:72px;font-size:32px;box-shadow:0 10px 34px color-mix(in srgb,var(--who,var(--amber)) 45%,transparent)}
+.face.away{opacity:.45;transition:opacity .3s}
+
+#toast{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));transform:translateX(-50%);z-index:80;background:var(--raised);border:1px solid var(--line);padding:9px 16px;border-radius:20px;font-weight:500;width:max-content;max-width:calc(100% - 24px);text-align:center;overflow-wrap:anywhere;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:toastin .3s cubic-bezier(.2,1.2,.4,1)}
+
+.mark{width:28px;height:28px;flex:none;overflow:visible}
+.mark .ring{fill:none;stroke-width:8}
+.mark.draw .ring{stroke-dasharray:189;stroke-dashoffset:189;stroke-linecap:round;animation:draw .95s cubic-bezier(.65,0,.35,1) forwards}
+.mark.draw .r1{transform:translateX(-18px);animation:draw .95s cubic-bezier(.65,0,.35,1) forwards,meet .7s cubic-bezier(.3,1.3,.5,1) .5s forwards}
+.mark.draw .r2{transform:translateX(18px);animation:draw .95s cubic-bezier(.65,0,.35,1) .08s forwards,meet .7s cubic-bezier(.3,1.3,.5,1) .5s forwards}
+.mark.draw .spark{transform-origin:50px 50px;transform:scale(0);animation:sparkin .5s cubic-bezier(.3,1.7,.5,1) .85s forwards}
+.mark.beat{animation:breathe 2.6s ease-in-out infinite}
+
+/* Icons are one colour. A seat holds an icon beside a label: white on dark, and black on white once chosen. */
+.ic{width:20px;height:20px;flex:none;display:block;pointer-events:none}
+.btn .ic{width:19px;height:19px}
+.seat{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;font:600 14px/1 var(--display);transition:background .2s,color .2s}
+.now>.seat{background:#fff;color:#0c0914;animation:seat .5s var(--spring)}
+@keyframes seat{0%{transform:scale(1) rotate(0)}35%{transform:scale(.55) rotate(-28deg)}100%{transform:scale(1) rotate(0)}}
+#sparks{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden}
+.spark{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--c);will-change:transform,opacity}
+.spark.sq{border-radius:2px}.spark.ring{width:11px;height:11px;background:none;border:2.500px solid var(--c)}.spark.bar{width:5px;height:13px;border-radius:3px}
+@keyframes jelly{0%{transform:scale(1)}30%{transform:scale(1.08,.92)}55%{transform:scale(.95,1.06)}80%{transform:scale(1.03,.98)}100%{transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes in{from{opacity:0;transform:translateY(5px)}}
+@keyframes rise-in{from{opacity:0;transform:translateY(16px) scale(.98)}}
+@keyframes sheet{from{opacity:0;transform:translateY(-8px) scale(.975)}}
+@keyframes cardin{from{opacity:0;transform:translateY(14px) scale(.94)}}
+@keyframes wiggle{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}25%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:.85}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,-10px) scale(.96)}}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes pulse{50%{transform:scale(1.25)}}
+@keyframes breathe{50%{transform:scale(1.06)}}
+@keyframes facein{from{opacity:0;transform:scale(.3)}}
+@keyframes votepop{40%{transform:scale(1.06)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes meet{to{transform:translateX(0)}}
+@keyframes sparkin{to{transform:scale(1)}}
+@keyframes fade{from{opacity:0}}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

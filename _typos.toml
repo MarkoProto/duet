@@ -1,0 +1,13 @@
+[files]
+# Fonts, pictures and the source PDFs are not prose.
+extend-exclude = ["*.woff2", "*.png", "*.jpg", "*.webp", "*.pdf", "docs/sources/"]
+
+[default]
+# Unicode ranges in the font rules are hex, not words.
+extend-ignore-re = ["unicode-range:[^;}]*"]
+
+[default.extend-words]
+# A test that two secrets differ by one letter.
+abd = "abd"
+# A test that a typo in a long word still counts as the same answer.
+spagetti = "spagetti"

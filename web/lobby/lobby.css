@@ -1,0 +1,139 @@
+/* The lobby: one thing to do per screen, in the middle of the dusk. */
+html,body{overflow:hidden}
+body{background:var(--dusk);background-attachment:fixed}
+#page{height:var(--vh,100dvh);display:flex;flex-direction:column}
+#bar{flex:none;display:flex;align-items:center;justify-content:space-between;padding:max(12px,env(safe-area-inset-top)) 16px 4px}
+#brand{display:flex;align-items:center;gap:8px;text-decoration:none;font:600 21px/1 var(--display)}
+#langs{display:flex;padding:3px;border-radius:999px;background:rgba(12,9,20,.6);border:1px solid rgba(255,255,255,.09)}
+#langs button{padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted);transition:background .2s,color .2s}
+#langs button.now{background:var(--grad);color:var(--on-grad)}
+#view{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;padding:8px 20px 12px}
+.screen{margin:auto;width:min(440px,100%);display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:8px 0}
+.screen>*{animation:rise-in .6s var(--out) backwards}
+.screen>:nth-child(2){animation-delay:.06s}.screen>:nth-child(3){animation-delay:.12s}.screen>:nth-child(4){animation-delay:.18s}.screen>:nth-child(5){animation-delay:.24s}.screen>:nth-child(6){animation-delay:.3s}.screen>:nth-child(7){animation-delay:.36s}
+.screen.still>*{animation:none}
+.screen.leave{animation:leave .18s ease-in forwards}
+@keyframes leave{to{opacity:0;transform:translateY(-12px) scale(.985)}}
+h1{font:600 clamp(30px,7.500vw,44px)/1.08 var(--display);text-wrap:balance;letter-spacing:-.01em}
+h2{font:600 clamp(24px,6vw,32px)/1.12 var(--display);text-wrap:balance}
+.lead{color:var(--muted);font-size:16px;line-height:1.45;text-wrap:balance;max-width:380px}
+.fine{color:var(--muted);font-size:12.500px;line-height:1.45;text-wrap:balance;max-width:360px}
+.stack{display:flex;flex-direction:column;gap:10px;width:100%}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+#view{padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.note{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,184,77,.12);border:1px solid rgba(255,184,77,.5);color:#ffe2b0;font-size:14px;text-wrap:balance}
+
+/* Intro: the two rings draw themselves and meet, the name rises in. */
+#splash{position:fixed;inset:0;z-index:30;pointer-events:none;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;background:var(--dusk);animation:splashout .55s ease-in 1.700s forwards}
+#splash .mark{width:128px;height:128px}
+#word{font:600 44px/1 var(--display);letter-spacing:.01em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:wordin .6s ease-out .9s forwards}
+@keyframes wordin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes splashout{to{opacity:0;transform:scale(1.04);visibility:hidden}}
+.quick #splash{display:none}
+
+/* Hello */
+/* Welcome: three photos fanned like cards. They drift, and wobble when touched. */
+.fan{position:relative;width:270px;height:178px}
+.fan .card{position:absolute;left:50%;top:10px;width:118px;height:150px;margin-left:-59px;border-radius:18px;overflow:hidden;border:3px solid rgba(255,255,255,.92);box-shadow:0 14px 34px rgba(0,0,0,.5);cursor:pointer;transform:translate(var(--x,0),var(--y,0)) rotate(var(--r,0deg));animation:deal .8s var(--spring) backwards,drift 5s ease-in-out 1.200s infinite}
+.fan .card img{display:block;width:100%;height:100%;object-fit:cover}
+.fan .l{--x:-80px;--y:12px;--r:-11deg;animation-delay:.1s,1.400s}
+.fan .r{--x:80px;--y:12px;--r:10deg;animation-delay:.22s,1.900s}
+.fan .c{z-index:2;top:0;width:130px;height:166px;margin-left:-65px;animation-delay:.34s,1.200s}
+@keyframes deal{from{opacity:0;transform:translate(0,46px) rotate(0deg) scale(.6)}}
+@keyframes drift{0%,100%{transform:translate(var(--x,0),var(--y,0)) rotate(var(--r,0deg))}50%{transform:translate(var(--x,0),calc(var(--y,0px) - 7px)) rotate(calc(var(--r,0deg) + 1.500deg))}}
+.word{display:inline-block;animation:wordup .6s var(--spring) backwards}
+@keyframes wordup{from{opacity:0;transform:translateY(18px) rotate(-4deg)}}
+/* What the two are about to do. */
+.actcard{display:flex;align-items:center;gap:12px;padding:8px 16px 8px 8px;border-radius:16px;background:rgba(23,18,40,.86);border:1px solid var(--line);text-align:left;max-width:100%;animation:cardin .5s cubic-bezier(.2,1.25,.4,1) both}
+.actcard img{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:none}
+.actcard b{display:block;font:600 16px/1.2 var(--display)}
+.actcard span{display:block;font-size:13px;line-height:1.3;color:var(--muted)}
+.btn.quiet .ic{width:17px;height:17px}
+.agree{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:999px;background:rgba(12,9,20,.6);border:1.500px solid var(--line);font-size:15px;font-weight:500;transition:border-color .2s,background .2s,transform .12s}
+.agree i{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.agree i::after{content:"";width:9px;height:5px;border-left:2.500px solid var(--on-grad);border-bottom:2.500px solid var(--on-grad);transform:rotate(-45deg) translateY(-1px) scale(0);transition:transform .25s var(--spring)}
+.agree.now{border-color:var(--pink);background:var(--grad-soft)}.agree.now i{background:var(--amber);border-color:var(--amber)}.agree.now i::after{transform:rotate(-45deg) translateY(-1px) scale(1)}
+.agree:active{transform:scale(.97)}
+
+/* Questions */
+.dots{display:flex;gap:6px;align-items:center}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .3s,width .3s var(--out)}
+.dots i.done{background:var(--pink)}.dots i.now{width:22px;border-radius:4px;background:var(--grad)}
+.q{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px}
+.q.in{animation:qin .38s var(--out) both}.q.inback{animation:qinback .38s var(--out) both}
+.q.out{animation:qout .16s ease-in forwards}.q.outback{animation:qoutback .16s ease-in forwards}
+@keyframes qin{from{opacity:0;transform:translateX(34px)}}@keyframes qinback{from{opacity:0;transform:translateX(-34px)}}
+@keyframes qout{to{opacity:0;transform:translateX(-34px)}}@keyframes qoutback{to{opacity:0;transform:translateX(34px)}}
+.opts{display:flex;flex-direction:column;gap:9px;width:100%}
+.opt{display:flex;align-items:center;gap:13px;width:100%;padding:10px 14px 10px 10px;border-radius:16px;background:rgba(23,18,40,.86);border:1.500px solid var(--line);font-size:17px;font-weight:500;text-align:left;transition:transform .15s,border-color .15s,box-shadow .2s,background .2s}
+@media(hover:hover){.opt:hover{transform:translateX(3px);border-color:rgba(255,255,255,.55)}.pick:hover{transform:translateY(-2px)}}
+.opt:active{transform:scale(.97)}
+.opt.now{border-color:#fff;background:rgba(255,255,255,.1);box-shadow:0 0 22px rgba(255,255,255,.16)}
+.q .opt{animation:opt-in .45s var(--spring) backwards}.q .opt:nth-child(2){animation-delay:.05s}.q .opt:nth-child(3){animation-delay:.1s}.q .opt:nth-child(4){animation-delay:.15s}
+@keyframes opt-in{from{opacity:0;transform:translateY(14px) scale(.96)}}
+/* A small round photo above each question. */
+.badge{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.92);box-shadow:0 10px 26px rgba(0,0,0,.45);animation:badgein .6s var(--spring) backwards}
+@keyframes badgein{from{opacity:0;transform:scale(.3) rotate(-30deg)}}
+.grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.grid .chip{font-size:16px;padding:9px 15px;background:rgba(23,18,40,.86)}
+.grid .chip.now{background:#fff;animation:votepop .4s cubic-bezier(.3,1.6,.5,1)}
+.backlink{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:14px;padding:4px 8px 4px 2px;width:64px}.backlink:hover{color:var(--text)}.backlink .ic{width:16px;height:16px}
+textarea.input{font:500 18px/1.35 var(--body);text-align:left;resize:none;min-height:84px}
+/* In your own words: the link under the first question, and what was heard, as chips. */
+.wordslink{display:inline-flex;align-items:center;gap:7px;margin-top:2px}.wordslink .ic{width:16px;height:16px}
+.heard{width:100%;align-items:center}.heard:empty{display:none}
+.heardtitle{font:600 15px var(--body);color:var(--muted)}
+.heard .grid .chip{animation:opt-in .45s var(--spring) backwards}
+/* The note after both said yes: what they did together, and what is next. */
+.notecard{max-width:330px;padding:12px 16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid var(--line);font:500 16px/1.4 var(--body);text-wrap:balance}
+
+/* Waiting: your face in the middle, someone on the way round. */
+.orbit{position:relative;width:176px;height:176px;display:grid;place-items:center}
+.orbit::before{content:"";position:absolute;inset:0;border-radius:50%;border:1.500px dashed var(--line)}
+.orbit .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 62%,rgba(255,79,139,.5),rgba(124,92,255,.75));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));animation:spin 2.400s linear infinite}
+.orbit .moon{position:absolute;inset:0;animation:spin 2.400s linear infinite}
+.orbit .moon i{position:absolute;left:50%;top:-11px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--grad);box-shadow:0 0 18px rgba(255,79,139,.7)}
+.orbit .face{animation:facein .45s var(--spring),breathe 3s ease-in-out .5s infinite}
+/* What is about to happen, as a photo card that turns over. */
+.tipcard{margin:0;width:min(270px,84%);border-radius:16px;overflow:hidden;background:var(--raised);border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.4);transform:rotate(var(--tilt,-1.500deg));transition:transform .5s var(--spring),opacity .25s}
+.tipcard img{display:block;width:100%;height:auto;aspect-ratio:27/16;object-fit:cover}
+.tipcard figcaption{padding:9px 12px;font-size:14px;line-height:1.35;text-wrap:balance;min-height:56px;display:grid;place-items:center}
+.tipcard.turn{opacity:0;transform:rotate(var(--tilt,-1.500deg)) scale(.92) translateY(8px)}
+.count{font:600 15px var(--body);font-variant-numeric:tabular-nums}
+
+/* Paired: two faces come together, then the room is built in front of you. */
+.pairup{display:flex;align-items:center;justify-content:center;gap:14px;height:86px}
+.pairup .face:first-child{animation:fromleft .9s var(--spring) both}
+.pairup .face:last-child{animation:fromright .9s var(--spring) both}
+.pairup b{font:600 28px var(--display);color:var(--muted);animation:fade .4s .6s both}
+@keyframes fromleft{from{opacity:0;transform:translateX(-90px) scale(.6)}}@keyframes fromright{from{opacity:0;transform:translateX(90px) scale(.6)}}
+.why{font:600 clamp(18px,4.600vw,22px)/1.3 var(--display);text-wrap:balance;min-height:2.600em;display:flex;align-items:center}
+.progress{width:min(240px,76%);height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+.progress i{display:block;height:100%;border-radius:3px;background:var(--grad);transform-origin:left;transform:scaleX(.08);transition:transform .7s var(--out)}
+
+/* After: what was destroyed, then the two questions. */
+.ask{width:100%;padding:14px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.ask p{font:600 17px/1.25 var(--display)}
+.ask .row{justify-content:flex-start}
+/* Yes is white, no is black. The one chosen gets a ring and the other steps back. */
+.pick{flex:1;min-width:120px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:13px;border:1.500px solid;font-size:16px;font-weight:600;transition:transform .2s var(--spring),opacity .2s,box-shadow .2s}
+.pick.yes{background:#fff;color:#0c0914;border-color:#fff}
+.pick.no{background:#07050d;color:#fff;border-color:rgba(255,255,255,.3)}
+.pick:active{transform:scale(.96)}
+.pick.now{transform:scale(1.04);box-shadow:0 0 0 3px var(--amber),0 0 24px rgba(255,184,77,.45)}
+.chosen .pick:not(.now){opacity:.38}
+.when{font:600 clamp(20px,5vw,26px)/1.2 var(--display)}
+/* The picture on the last screen, with the mark sitting on its edge. */
+.snap{position:relative;width:min(280px,86%);margin-bottom:16px}
+.snap img{display:block;width:100%;height:auto;aspect-ratio:14/9;object-fit:cover;border-radius:20px;border:3px solid rgba(255,255,255,.92);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.snap.glad{rotate:-2deg}.snap.calm img{filter:saturate(.75) brightness(.9)}
+.snap span{position:absolute;left:50%;bottom:-24px;margin-left:-27px;width:54px;height:54px;border-radius:50%;background:var(--ink);display:grid;place-items:center}
+.snap .mark{width:38px;height:38px}
+.screen>.snap{animation:snapin .7s var(--spring) backwards}
+@keyframes snapin{from{opacity:0;transform:scale(.6) rotate(-10deg)}}
+.cd{font:600 clamp(34px,9vw,52px)/1 var(--display);font-variant-numeric:tabular-nums}
+
+#burst{position:fixed;inset:0;z-index:20;pointer-events:none;overflow:hidden}
+.float{position:absolute;bottom:60px;font-size:44px;line-height:1;will-change:transform,opacity;animation:rise 2.600s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes rise{0%{transform:translateY(24px) scale(.4);opacity:0}12%{transform:translateY(0) scale(1.15);opacity:1}70%{opacity:1}100%{transform:translateY(-70vh) rotate(var(--r)) scale(1);opacity:0}}
+@media(max-height:700px){.fan{scale:.8;margin:-16px 0}.screen{gap:11px}.orbit{width:132px;height:132px}.badge{width:60px;height:60px}}

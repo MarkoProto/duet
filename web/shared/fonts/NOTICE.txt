@@ -1,0 +1,9 @@
+Bricolage Grotesque and Figtree are served from this folder so that the pages fetch nothing from
+anyone else. Both are licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
+
+Bricolage Grotesque: Copyright 2022 The Bricolage Grotesque Project Authors
+  (https://github.com/ateliertriay/bricolage)
+Figtree: Copyright 2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)
+
+The files are the Latin and Latin Extended subsets as published by Google Fonts. Japanese text
+uses the device's own fonts.

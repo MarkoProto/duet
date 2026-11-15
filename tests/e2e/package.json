@@ -1,0 +1,9 @@
+{
+  "name": "duet-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Browser tests: two Chrome windows through the whole flow.",
+  "dependencies": {
+    "playwright-core": "^1.48.0"
+  }
+}
