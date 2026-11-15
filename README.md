@@ -82,7 +82,7 @@ Everything below was run on one Mac between 11 and 15 November 2026.
 | Edge cases, looked for on purpose | 15 November: three separate reviews (the room page, the lobby, the AI checks) listed 35 ways things could go wrong; the ones that matter are fixed and tested. Held requests, the Daytona path, retry a failed send, keep sends in order and survive a room that is slow to answer; a page whose room is gone goes back to the lobby; a half-drawn line from a closed page cannot keep the turn; contact details are refused in any width or spacing, and nothing the model writes may repeat what someone wrote for it alone; numbers written as words are checked in the note; "Build them now" cannot double the sandboxes; a second lobby started by mistake stops before touching the first one's rooms |
 | The open model on Nosana does its three jobs | 15 November, at the event, with credits: `duet doctor` asked `qwen/qwen3.8-27b` for a pair's plan (answered as JSON in 6.9 s, 6 of 6 parts accepted), to read someone's own words (1.7 s, 5 of 7 fields from the model) and for the note after both said yes (1.6 s, in English and Japanese). Then through the whole lobby with real Daytona rooms: a person's own words read by the model in 3.1 s, the pair planned by the model in 7.4 s, the admin page counting model 1, rules 0 for both |
 | Stopping the lobby removes the rooms it built ahead | Same run: Ctrl-C, then the account's sandbox list was empty a few seconds later |
-| The code is clean by the usual Rust standards | 14 November, on macOS and again in a Linux container: rustfmt, clippy at the pedantic level with warnings as errors (the few rules turned off are listed with a reason in `Cargo.toml`), cargo-deny (advisories, licences, sources), cargo-machete (no unused dependencies), typos, and gitleaks over the files and the history. CI repeats the first four on every push |
+| The code is clean by the usual Rust standards | 14 November, on macOS and again in a Linux container: rustfmt, clippy at the pedantic level with warnings as errors (the few rules turned off are listed with a reason in `Cargo.toml`), cargo-deny (advisories, licences, sources), cargo-machete (no unused dependencies), typos and gitleaks. On 15 November, before publishing, every file was searched again for keys, tokens and private details: none. CI runs rustfmt, clippy, the tests, cargo-deny and typos on every push |
 
 **Not yet checked, and said so on purpose:**
 
@@ -101,6 +101,7 @@ Everything below was run on one Mac between 11 and 15 November 2026.
 ```sh
 scripts/run.sh                 # http://127.0.0.1:8787   admin view at /hood
 scripts/run.sh demo            # the stage setup: 90-second rooms, Person A, Person B (Incognito) and the admin page side by side
+scripts/run.sh demo drawing    # the same, with one game for everyone (drawing, story, wavelength, thisorthat or signal)
 scripts/run.sh doctor          # first contact with Daytona and Nosana
 scripts/run.sh check           # second opinion: the same accounts through Daytona's own Python package
 scripts/test.sh                # every test that needs no key, about two minutes
