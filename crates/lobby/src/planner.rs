@@ -942,8 +942,14 @@ fn lines(v: Option<&Value>, max: usize, limit: usize) -> Vec<Bi> {
         .unwrap_or_default()
 }
 
-/// Lays the model's answer over the rule-made plan. Returns the plan and how many fields were
-/// taken from the model.
+/// How many parts of a plan the model can write for this game: the game itself, why, the opener,
+/// the nudges, the last-minute line, and the game's content (Signal has none).
+pub fn parts(kind: &str) -> usize {
+    if kind == "signal" { 5 } else { 6 }
+}
+
+/// Lays the model's answer over the rule-made plan. Returns the plan and how many parts were
+/// taken from the model, out of `parts(kind)`.
 pub fn merge(pair: &Pair, reply: &Value) -> (Plan, usize) {
     let mut rng = Rng(pair.seed);
     let asked = reply
@@ -1028,13 +1034,13 @@ pub fn merge(pair: &Pair, reply: &Value) -> (Plan, usize) {
             }
             "story" => {
                 // The twists are written for the model's own first line, so they come only with it.
+                // The first line and its twists are one part, the game's content, as for the others.
                 if let Some(start) = mine(reply.get("start"), 160) {
                     plan.activity.data["start"] = json!(start);
                     taken += 1;
                     let twists = many(reply.get("twists"), 100, 5);
                     if twists.len() >= 2 {
                         plan.activity.data["twists"] = json!(twists);
-                        taken += 1;
                     }
                 }
             }
@@ -1445,6 +1451,41 @@ mod tests {
         assert_eq!(x.activity.kind, y.activity.kind);
         assert_eq!(x.activity.data, y.activity.data);
         assert_eq!(x.host.nudges, y.host.nudges);
+    }
+
+    #[test]
+    fn a_full_answer_counts_each_part_once_whatever_the_game() {
+        let (a, b) = (
+            profile("talk", &["music"], "both", "calm"),
+            profile("make", &["art"], "both", "calm"),
+        );
+        let t = |en: &str| json!({"en": en, "ja": format!("{en}（日本語）")});
+        let lines = |n: usize, what: &str| {
+            (0..n)
+                .map(|i| t(&format!("{what} number {i}")))
+                .collect::<Vec<_>>()
+        };
+        for kind in ACTIVITIES {
+            let reply = json!({
+                "activity": kind,
+                "why": t("One of you makes, one of you talks."),
+                "opener": t("Start small."),
+                "nudges": lines(3, "A quiet question"),
+                "last_minute": t("Say one thing you liked."),
+                "prompts": lines(8, "A thing to draw or answer"),
+                "pairs": (0..8).map(|i| json!({"a": t(&format!("Tea {i}")), "b": t(&format!("Coffee {i}"))})).collect::<Vec<_>>(),
+                "start": t("The lights went out in the old station."),
+                "twists": lines(3, "A twist"),
+            });
+            let (plan, taken) = merge(&pair(&a, &b, &[], 1), &reply);
+            assert_eq!(plan.activity.kind, kind);
+            assert_eq!(
+                taken,
+                parts(kind),
+                "{kind}: {taken} of {} parts",
+                parts(kind)
+            );
+        }
     }
 
     #[test]

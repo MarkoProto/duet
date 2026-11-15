@@ -187,8 +187,9 @@ async fn nosana(cfg: &Settings) -> Result<(), String> {
     )?;
     let (plan, taken) = planner::merge(&pair, &answer.json);
     println!(
-        "        activity {}, {taken} of 6 parts accepted from the model",
-        plan.activity.kind
+        "        activity {}, {taken} of {} parts accepted from the model",
+        plan.activity.kind,
+        planner::parts(&plan.activity.kind)
     );
     let show = |label: &str, line: &Bi| println!("        {label}: {} / {}", line.en, line.ja);
     show("why", &plan.host.why);
