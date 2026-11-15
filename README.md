@@ -6,24 +6,26 @@
 ![Nosana](https://img.shields.io/badge/AI-Nosana%20%C2%B7%20Qwen%203.8%2027B-ff4f8b)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-**Fifteen minutes with someone new. One small thing to do together, and then the room is gone.**
-
-Two strangers answer a few taps, or write a sentence about themselves. Duet pairs them, and an open model on **Nosana** picks one small activity for the two of them and says why. They meet in a private room that is its own **Daytona** sandbox: the activity, a chat, reactions and a shared clock. At the bell the sandbox is deleted, and everything said in it goes with it, unless one of them reported it. Each is then asked, in private, whether they want more time. If both say yes, they meet again the next day for longer.
+Fifteen minutes with someone new: one small thing to do together, and then the room is gone.
+Two strangers answer a few taps or write a sentence about themselves. An open model on **Nosana** pairs the two with one of five small games and says why. They meet in a private room that is its own **Daytona** sandbox, deleted at the bell with everything said in it. Only if both say yes, in private, do they meet again the next day.
 
 ![One person's evening in Duet, screen by screen](docs/storyboard.png)
 
 | | |
 | --- | --- |
-| **Real-life problem** | Loneliness. In Japan almost 4 in 10 people feel lonely at least sometimes, and in 2025 an estimated 22,222 people living alone died at home and were found a week or more later (figures and sources under "Why"). Talking to a stranger is hard, and a chatbot is not company. Doing one small thing next to someone is easier, and it gives the two something to talk about. |
-| **Innovation** | Not a chat app and not a dating app: one small thing to do, with a clock. The room is a sandbox that exists only for the session, so deleting it is the privacy promise, and the lobby checks that it is gone. The model plans, but never sees a name, and every answer it gives is checked before anyone sees it. A second meeting happens only if both say yes, in private, so no one is turned down to their face. |
-| **Flow** | Name → six taps, or a sentence in their own words → paired, with the reason shown to both → the room opens at once → 15 minutes: an activity, chat, reactions → the room is gone for good → two private questions → both yes: same time tomorrow, 45 minutes. English first, Japanese one tap away. |
-| **Sponsor: Daytona** | One sandbox per pair. It is created with a hard lifetime, so Daytona removes it even if our lobby has crashed. The room program is moved in and started. People reach it through the lobby, which passes their requests on through a signed link with Daytona's skip-warning header (Daytona's documented "custom preview proxy"), so they never see Daytona's address or its preview warning page. At the bell the sandbox is deleted and then checked to be gone. Chat lives only in that sandbox's memory. Rooms are built ahead, several sandboxes at the same time, so a pair's room opens at once; the admin page shows every sandbox and every step with its time, and rebuilds a batch on demand. Speaks both Daytona APIs: the new one from SDK 2.0 (13 November 2026) and the original one, chosen by itself. |
-| **Sponsor: Nosana** | An open model on Nosana's GPUs (`qwen/qwen3.8-27b`) does three jobs, in English and Japanese, and never sees a name. 1: it reads a few sentences someone wrote about themselves into the six taps. 2: it plans the pair: which of five activities, why these two, what the host says, and the activity's content (prompts, This or That's pairs, a story's first line and twists). 3: after both say yes, it writes their note on what they did together and what is next, from the room's record, never the chat. Every answer is checked: only known words for the taps, no contact details, nothing repeated from what someone wrote, and no number in the note that is not in the record. Rules stand under all three jobs, so Duet keeps working if the model is slow, wrong or gone: when Nosana stopped serving the model for a while on the day, people went on being paired, with the room ready in 3.5 s, and the admin page showed every decision the rules made instead. |
-| **Completeness: measured** | Measured on 14 November against the real Daytona, through the whole flow in two Chrome windows: a pair's room opens in **0.7 s**, because it was built ahead. Building one takes about 5.5 s (create the sandbox 0.2 s, load the room program 3.5 s, start it 1.8 s), and a closed room is removed in 0.3 s. `duet doctor`, one sandbox end to end: 10.3 s, every step passed. On 15 November, at the event, Nosana's `qwen/qwen3.8-27b` did all three jobs for real: own words read into the taps in 1.7 to 3.1 s, a pair planned in 6.9 to 7.4 s (6 of 6 parts accepted from the model), the note after both said yes in 1.6 s; through the whole lobby, two people were paired by the model and their Daytona room was ready 11.5 s after the second one answered. |
-| **Completeness: tested** | 115 Rust tests and 97 browser checks (`scripts/test.sh`); the same 37-check browser flow also passes with real Daytona sandboxes (`REAL=daytona node flow.mjs`). On every push, CI checks the format, runs clippy at the pedantic level with warnings as errors, runs the Rust tests, checks advisories, licences and sources with cargo-deny, and checks spelling. Pairing is the best possible up to 18 people and within 3% of it above; 200 people are paired in under 3 seconds. The room program is a 1.6 MB static Linux binary that ran in 1.7 MB of memory. |
-| **Security** | Built for strangers meeting: a room is a sandbox with two random keys and is deleted at the bell; nothing said is kept unless reported; the model never sees a name and every line it writes is checked for contact details. Pages may not be framed or load anything from other sites. Checked on 15 November with open-source tools: cargo-deny (RustSec advisories), gitleaks, Semgrep, npm audit, and 29 live attack checks (`scripts/security-check.sh`); one gap was found (pages could be framed by another site) and fixed. See "Security" below. |
+| Problem | In Japan 37.7% of people feel lonely at least sometimes, and it peaks in their 30s (6.1% often or always). In 2025, 22,222 people living alone died at home and were found 8 or more days later (Cabinet Office, 14 April 2026). 41.4% of households are one person (2025 census). Sources and more under "Why". |
+| What is new | Not a chat app and not a dating app: one small game with a stranger, on a 15-minute clock. The room is a sandbox that exists only for the session, so deleting it is the privacy promise, and the lobby checks it is gone. A second meeting happens only if both say yes, in private, so no one is turned down to their face. |
+| Flow | Name → six taps, or a sentence in their own words → paired, with the reason shown to both → the room opens at once → 15 minutes: Same Wavelength, This or That, Four Hands, Tale for Two or Signal, with chat and reactions → the room is deleted → two private questions → both yes: same time tomorrow, 45 minutes. English, with Japanese one tap away. |
+| Result | At the event, with the real Daytona and Nosana: Aya wrote "Pretty tired after work, but I would love to draw something with someone. I am more of a listener." The model read it into her taps in 3.1 s, paired her with Ren for Tale for Two, "You both love making things and have a calm energy that fits well together." (7.4 s), and their Daytona room was ready 11.5 s after Ren answered. A room built ahead opens in 0.7 to 1.8 s; a closed one is deleted in about 0.5 s and confirmed gone. |
+| **Daytona** | One sandbox per pair, built ahead in parallel batches (3 sandboxes in 6.1 s): create → load the 1.6 MB room program → start → the pair plays through the lobby's own address → delete at the bell → confirm gone. Each step is timed on the admin page, and each sandbox has a hard lifetime, so it goes even if the lobby crashes. The chat lives only in the sandbox's memory. Speaks the original API and the new one from SDK 2.0. |
+| **Nosana** | `qwen/qwen3.8-27b` on Nosana inference does three jobs: reads someone's own words into the six taps (1.7 to 3.1 s), plans the pair, with the game, the reason, the host's lines and the game's content (about 7 s), and writes the note after both say yes (1.6 s). It never sees a name, and every line is checked: no contact details, nothing repeated from what someone wrote, no number that is not in the record. Rules stand under all three jobs: when Nosana stopped serving the model for a while on the day, pairing went on, and the model was picked up again by itself. |
+| Tested | 115 Rust tests, 97 browser checks in real Chrome windows, the full flow with real Daytona sandboxes (37/37), 29 live security checks, and the model's decisions on twelve made-up people (`ai_eval`). CI on every push: rustfmt, clippy at the pedantic level with warnings as errors, the tests, cargo-deny and spelling. |
+| Security | A room is a sandbox with two random keys, deleted at the bell; no accounts; the model never sees a name; pages may not be framed or load anything from other sites. cargo-deny, gitleaks, Semgrep and npm audit found nothing; one gap (framing by another site) was found and fixed. See "Security". |
+| Limits | One lobby process, for a room of people rather than a city. Adults only by a tick box, and moderation is Report. Safari, Firefox and real phones not yet tested. |
 
-Built solo for Daytona HackSprint Tokyo, 15 November 2026: prepared in the week before, then connected to both sponsors and finished at the event. Daytona was measured on 14 November and Nosana answered for real on the day. "What is real today" lists every claim with how and when it was checked.
+Built solo for Daytona HackSprint Tokyo, 2026-11-15: prepared in the week before, then connected to both sponsors and finished at the event.
+
+---
 
 ## 日本語
 
@@ -36,6 +38,62 @@ Built solo for Daytona HackSprint Tokyo, 15 November 2026: prepared in the week 
 | Daytona | ペアごとに一つのサンドボックス。部屋のプログラムはその中だけで動き、会話もそのメモリの中だけにあります。終了時にサンドボックスを削除し、消えたことを確認します。部屋は複数を同時に先に用意し、各ステップの所要時間を管理画面に表示します。実測（11月14日、実際のDaytona）：部屋が開くまで0.7秒、作成から起動まで約5.5秒、削除0.3秒。 |
 | Nosana | オープンモデルが3つの仕事をします。①自由に書いた文章を6つの選択に変換、②二人の計画（アクティビティ、ペアの理由、進行役のセリフ）、③二人とも「また」と答えた後のメモ。名前はモデルに渡しません。どの仕事もルールで代替でき、モデルの答えは必ず検証します（記録にない数字は使いません）。 |
 | 言語 | 英語が基本、日本語にはワンタップで切り替えられます。 |
+
+## Run it
+
+```sh
+scripts/run.sh                 # http://127.0.0.1:8787   admin view at /hood
+scripts/run.sh demo            # the stage setup: 90-second rooms, Person A, Person B (Incognito) and the admin page side by side
+scripts/run.sh demo drawing    # the same, with one game for everyone (drawing, story, wavelength, thisorthat or signal)
+scripts/run.sh doctor          # first contact with Daytona and Nosana
+scripts/run.sh check           # second opinion: the same accounts through Daytona's own Python package
+scripts/test.sh                # every test that needs no key, about two minutes
+scripts/security-check.sh      # 29 live attack checks against a lobby of its own (no keys, nothing outside touched)
+cargo clippy --workspace --all-targets -- -D warnings && cargo deny check   # the checks CI runs, with cargo fmt and typos
+cargo run --release -p duet --example ai_eval   # the model's decisions on twelve made-up people, report in data/ai-eval.md
+(cd tests/e2e && node tour.mjs) # a simulated evening: rewrites docs/screens and docs/storyboard.png
+```
+
+Rust 1.99.1 comes from `rust-toolchain.toml` (with the two Linux targets for the room; the code itself needs 1.88 or later). The browser tests need Node and Google Chrome.
+
+## Daytona / Nosana (connecting them)
+
+- Keys come from `DAYTONA_API_KEY` and `NOSANA_API_KEY`, or from `~/Secrets/Daytona/key` and `~/Secrets/Nosana/key`. A Nosana address or model handed out on the day goes in `.env` as `NOSANA_LLM_URL` / `NOSANA_LLM_MODEL`. Other settings are in `.env.example`.
+- `scripts/run.sh doctor` is the first contact: it says which Daytona API was chosen, builds a sandbox end to end with every step timed, and asks Nosana all three jobs. `scripts/run.sh check` does the same through Daytona's own Python package, as a second opinion; `DUET_DAYTONA_API=v0` or `v2` forces one API.
+- Without keys, rooms run inside the lobby and the rules do the model's jobs, and the admin page says so: a local run is never shown as a sponsor run.
+- The lobby prints an admin address, `/hood#key=…`: opened with that key, the admin page can rebuild the rooms kept ahead.
+
+## Structure
+
+```
+browser ──HTTPS──> duet (lobby)  ──────────────>  Nosana  (reads own words, plans the pair, writes the note)
+   │                 │  pairing, votes, tomorrow
+   │                 └───── Daytona API ───────>  one sandbox per pair
+   │                                                 └─ duet-room (activity, chat, clock)
+   └──── /r/<room>/ on the lobby ──> signed link + skip-warning header ┘
+```
+
+Two Rust programs:
+
+- **`duet`**, the lobby. It knows who is waiting and who said yes. It never sees what is said in a room, unless a report asks for it.
+- **`duet-room`**, the room. A 1.6 MB static Linux binary with no keys and no network calls of its own. Removing its sandbox removes the session.
+
+| Path | What |
+| --- | --- |
+| `crates/room/` | The room: clock, phases, ordered relay, sealed answers, limits, report. Runs alone in a sandbox, or inside the lobby |
+| `crates/lobby/src/matcher.rs` | Pairing: exact up to 18 people, large neighbourhood search above |
+| `crates/lobby/src/profile.rs` | From taps to a profile, from two profiles to a score |
+| `crates/lobby/src/planner.rs` | The pair's plan: rules and a prompt bank in two languages, with the model's answer laid over it field by field |
+| `crates/lobby/src/llm.rs` | Nosana, through its OpenAI-compatible endpoint |
+| `crates/lobby/src/reader.rs` | Nosana's first job: own words into the six taps, with keyword rules underneath |
+| `crates/lobby/src/notes.rs` | Nosana's third job: the note after both said yes, checked against the record |
+| `crates/lobby/src/daytona.rs` | Daytona as plain web requests, in both APIs, and rooms built ahead |
+| `scripts/sponsor-check.py` | The second opinion, with Daytona's own Python package |
+| `crates/lobby/src/lobby.rs` | People, rounds, sessions, votes, tomorrow, what is saved |
+| `crates/lobby/src/doctor.rs` | `duet doctor` |
+| `crates/embed/` | Pages flattened to one file each and stored compressed inside the binaries |
+| `web/room/`, `web/lobby/`, `web/shared/` | The pages. Plain HTML, CSS and JavaScript |
+| `tests/e2e/` | The browser tests |
 
 ## Why
 
@@ -100,55 +158,6 @@ Everything below was run on one Mac between 11 and 15 November 2026.
 ## What it looks like
 
 `docs/storyboard.png` is the journey of one person, screen by screen. `docs/screens/` holds every screen from a simulated evening with ten people: the person's side on a phone and a laptop (`user-…`), and the admin side (`admin-…`).
-
-## Run it
-
-```sh
-scripts/run.sh                 # http://127.0.0.1:8787   admin view at /hood
-scripts/run.sh demo            # the stage setup: 90-second rooms, Person A, Person B (Incognito) and the admin page side by side
-scripts/run.sh demo drawing    # the same, with one game for everyone (drawing, story, wavelength, thisorthat or signal)
-scripts/run.sh doctor          # first contact with Daytona and Nosana
-scripts/run.sh check           # second opinion: the same accounts through Daytona's own Python package
-scripts/test.sh                # every test that needs no key, about two minutes
-scripts/security-check.sh      # 29 live attack checks against a lobby of its own (no keys, nothing outside touched)
-cargo clippy --workspace --all-targets -- -D warnings && cargo deny check   # the checks CI runs, with cargo fmt and typos
-cargo run --release -p duet --example ai_eval   # the model's decisions on twelve made-up people, report in data/ai-eval.md
-(cd tests/e2e && node tour.mjs) # a simulated evening: rewrites docs/screens and docs/storyboard.png
-```
-
-Keys are read from `DAYTONA_API_KEY` and `NOSANA_API_KEY`, or from `~/Secrets/Daytona/key` and `~/Secrets/Nosana/key`. Other settings are in `.env.example`. The lobby prints an admin address, `/hood#key=…`: opened with that key, the admin page can rebuild the rooms kept ahead. rustup takes the toolchain from `rust-toolchain.toml` (Rust 1.99.1, with the two Linux targets for the room); the code itself needs 1.88 or later. The browser tests need Node and Google Chrome.
-
-## How it fits together
-
-```
-browser ──HTTPS──> duet (lobby)  ──────────────>  Nosana  (reads own words, plans the pair, writes the note)
-   │                 │  pairing, votes, tomorrow
-   │                 └───── Daytona API ───────>  one sandbox per pair
-   │                                                 └─ duet-room (activity, chat, clock)
-   └──── /r/<room>/ on the lobby ──> signed link + skip-warning header ┘
-```
-
-Two Rust programs:
-
-- **`duet`**, the lobby. It knows who is waiting and who said yes. It never sees what is said in a room, unless a report asks for it.
-- **`duet-room`**, the room. A 1.6 MB static Linux binary with no keys and no network calls of its own. Removing its sandbox removes the session.
-
-| Path | What |
-| --- | --- |
-| `crates/room/` | The room: clock, phases, ordered relay, sealed answers, limits, report. Runs alone in a sandbox, or inside the lobby |
-| `crates/lobby/src/matcher.rs` | Pairing: exact up to 18 people, large neighbourhood search above |
-| `crates/lobby/src/profile.rs` | From taps to a profile, from two profiles to a score |
-| `crates/lobby/src/planner.rs` | The pair's plan: rules and a prompt bank in two languages, with the model's answer laid over it field by field |
-| `crates/lobby/src/llm.rs` | Nosana, through its OpenAI-compatible endpoint |
-| `crates/lobby/src/reader.rs` | Nosana's first job: own words into the six taps, with keyword rules underneath |
-| `crates/lobby/src/notes.rs` | Nosana's third job: the note after both said yes, checked against the record |
-| `crates/lobby/src/daytona.rs` | Daytona as plain web requests, in both APIs, and rooms built ahead |
-| `scripts/sponsor-check.py` | The second opinion, with Daytona's own Python package |
-| `crates/lobby/src/lobby.rs` | People, rounds, sessions, votes, tomorrow, what is saved |
-| `crates/lobby/src/doctor.rs` | `duet doctor` |
-| `crates/embed/` | Pages flattened to one file each and stored compressed inside the binaries |
-| `web/room/`, `web/lobby/`, `web/shared/` | The pages. Plain HTML, CSS and JavaScript |
-| `tests/e2e/` | The browser tests |
 
 ## The five activities
 
