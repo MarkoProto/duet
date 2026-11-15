@@ -8,7 +8,6 @@ node_modules/
 # Another team's code, kept only for reference on this Mac. Never published with Duet.
 /reference/
 # Kept on this Mac only, never published with Duet: the second app, the contest notes, the plan.
-/kokodoko/
 /CONTEST.md
 /docs/competition.md
 /PLAN.md

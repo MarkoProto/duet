@@ -14,7 +14,8 @@ Two strangers answer a few taps, or write a sentence about themselves. Duet pair
 | **Daytona** | One sandbox per pair. It is created with a hard lifetime, so Daytona removes it even if our lobby has crashed. The room program is moved in and started. People reach it through the lobby, which passes their requests on through a signed link with Daytona's skip-warning header (Daytona's documented "custom preview proxy"), so they never see Daytona's address or its preview warning page. At the bell the sandbox is deleted and then checked to be gone. Chat lives only in that sandbox's memory. Rooms are built ahead, several sandboxes at the same time, so a pair's room opens at once; the admin page shows every sandbox and every step with its time, and rebuilds a batch on demand. Speaks both Daytona APIs: the new one from SDK 2.0 (13 November 2026) and the original one, chosen by itself. |
 | **Nosana** | An open model on Nosana's GPUs does three jobs, in English and Japanese, and never sees a name. 1: it reads a few sentences someone wrote about themselves into the six taps. 2: it plans the pair: which of five activities, why these two, what the host says, and the activity's content (prompts, This or That's pairs, a story's first line and twists). 3: after both say yes, it writes their note on what they did together and what is next, from the room's record, never the chat. Rules do all three when the model is absent, slow or wrong, and every answer is checked: only known words for the taps, and no number in the note that is not in the record. |
 | **Result** | Measured on 14 November against the real Daytona, through the whole flow in two Chrome windows: a pair's room opens in **0.7 s**, because it was built ahead. Building one takes about 5.5 s (create the sandbox 0.2 s, load the room program 3.5 s, start it 1.8 s), and a closed room is removed in 0.3 s. `duet doctor`, one sandbox end to end: 10.3 s, every step passed. On 15 November, at the event, Nosana's `qwen/qwen3.8-27b` did all three jobs for real: own words read into the taps in 1.7 to 3.1 s, a pair planned in 6.9 to 7.4 s (6 of 6 parts accepted from the model), the note after both said yes in 1.6 s; through the whole lobby, two people were paired by the model and their Daytona room was ready 11.5 s after the second one answered. |
-| **Proof** | 114 Rust tests and 97 browser checks (`scripts/test.sh`); the same 37-check browser flow also passes with real Daytona sandboxes (`REAL=daytona node flow.mjs`). On every push, CI checks the format, runs clippy at the pedantic level with warnings as errors, runs the Rust tests, checks advisories, licences and sources with cargo-deny, and checks spelling. Pairing is the best possible up to 18 people and within 3% of it above; 200 people are paired in under 3 seconds. The room program is a 1.6 MB static Linux binary that ran in 1.7 MB of memory. |
+| **Proof** | 115 Rust tests and 97 browser checks (`scripts/test.sh`); the same 37-check browser flow also passes with real Daytona sandboxes (`REAL=daytona node flow.mjs`). On every push, CI checks the format, runs clippy at the pedantic level with warnings as errors, runs the Rust tests, checks advisories, licences and sources with cargo-deny, and checks spelling. Pairing is the best possible up to 18 people and within 3% of it above; 200 people are paired in under 3 seconds. The room program is a 1.6 MB static Linux binary that ran in 1.7 MB of memory. |
+| **Security** | Built for strangers meeting: a room is a sandbox with two random keys and is deleted at the bell; nothing said is kept unless reported; the model never sees a name and every line it writes is checked for contact details. Pages may not be framed or load anything from other sites. Checked on 15 November with open-source tools: cargo-deny (RustSec advisories), gitleaks, Semgrep, npm audit, and 29 live attack checks (`scripts/security-check.sh`); one gap was found (pages could be framed by another site) and fixed. See "Security" below. |
 | **Limits** | Planning a pair with the model takes about 7 seconds, which people spend on the "finding your person" screen; past 12 seconds the rules plan instead, so no one waits longer. Without keys, rooms run inside the lobby and pairing uses the rules, and the admin page says so. One lobby process, fine for a room of people, not a city. Adults only, by a tick box. |
 
 Built for Daytona HackSprint Tokyo, 15 November 2026, solo. Written in the week before the event. Daytona was connected and measured on 14 November; Nosana answered for real on the day, 15 November. "What is real today" says what was run, and when.
@@ -106,6 +107,7 @@ scripts/run.sh demo drawing    # the same, with one game for everyone (drawing, 
 scripts/run.sh doctor          # first contact with Daytona and Nosana
 scripts/run.sh check           # second opinion: the same accounts through Daytona's own Python package
 scripts/test.sh                # every test that needs no key, about two minutes
+scripts/security-check.sh      # 29 live attack checks against a lobby of its own (no keys, nothing outside touched)
 cargo clippy --workspace --all-targets -- -D warnings && cargo deny check   # the checks CI runs, with cargo fmt and typos
 cargo run --release -p duet --example ai_eval   # the model's decisions on twelve made-up people, report in data/ai-eval.md
 (cd tests/e2e && node tour.mjs) # a simulated evening: rewrites docs/screens and docs/storyboard.png
@@ -156,6 +158,43 @@ Two Rust programs:
 | **Tale for Two** | a short story, one sentence each in turn, with twists that drop in every few lines | orders the sentences, so both agree whose turn it is |
 
 The model picks the activity and writes what it needs for these two people: Same Wavelength's prompts, Four Hands' ideas, This or That's pairs, Tale for Two's first line and twists. Built-in banks in both languages stand in when it does not. `DUET_ACTIVITIES` limits which ones a lobby offers. In the room, either person can suggest switching to another of them from the menu; the other decides, and both screens switch together (a game already played in that room is not offered again).
+
+## Security
+
+Duet puts two strangers in a room, so the risks are concrete: someone being found outside the app, a conversation being kept, a third person getting into a room, and the model being talked into writing something it should not. This is what stands in the way, and how it was checked.
+
+**By design**
+
+- **A room is its own sandbox, deleted at the bell.** The chat lives only in that sandbox's memory, and the lobby checks the sandbox is gone. Each sandbox also gets a hard lifetime on Daytona, so it goes even if the lobby has crashed. The room program holds no keys and makes no network calls of its own.
+- **Two random keys per room, one per person.** A wrong or missing key is refused. The key travels after the `#` in the room link, so the browser never sends it when it loads the page. People reach a Daytona room only through the lobby's own address; the sandbox's address and the lobby's session cookie are never shared with each other.
+- **No accounts.** A person is a random value in an `HttpOnly`, `SameSite=Lax` cookie (and `Secure` when the public address is HTTPS): no email, no password, nothing to steal. "Forget me" removes the person and their plans.
+- **The model never sees a name**, and what someone wrote "for the model alone" is passed as data, with the instruction never to follow it. Every line the model writes is checked before anyone sees it: links, handles, phone numbers and words like "LINE ID" are refused in any width or spacing, it may not repeat what someone wrote, and a note may not contain a number that is not in the room's record. A line that fails is dropped and the rules' line is used.
+- **The lobby** accepts only JSON (so another site cannot post a form to it), at most 16 KB per request, and sends no CORS headers (so other sites cannot read its answers). Admin actions need a key that is compared in constant time. The saved state is written atomically and readable only by the lobby's own user.
+- **The room** limits each person: chat to a burst of 6 then 1.5 messages a second, reactions, moves and live updates likewise. Messages are cut to their limits and cleaned.
+- **The pages** send a Content-Security-Policy (only the app's own origin; no plugins, no framing by other sites, no changed base address or form target), `X-Frame-Options: DENY`, `nosniff`, `no-referrer`, a Permissions-Policy that turns off camera, microphone, location and payment, and `Cross-Origin-Opener-Policy`. Text from people is always set as text, never as HTML: the only HTML a page inserts is its own icons and pictures.
+- **The code**: `unsafe` is forbidden in every crate, clippy runs at the pedantic level with warnings as errors, the Rust toolchain is pinned, and the CI actions are pinned to a commit.
+
+**Checked on 15 November, with open-source tools**
+
+| What | Tool | Result |
+| --- | --- | --- |
+| Known vulnerabilities in the Rust dependencies, their licences and sources | cargo-deny 0.20 (RustSec advisory database); also in CI on every push | none |
+| Known vulnerabilities in the browser-test tools' packages | npm audit | none |
+| Secrets in the files and the whole git history | gitleaks 8.30 | none |
+| Code patterns: OWASP, XSS, secrets, Rust and JavaScript | Semgrep 1.136, rule sets `p/default`, `p/javascript`, `p/rust`, `p/xss`, `p/secrets` | nothing of high severity. 9 low or informational, each read: reading command-line arguments (3), a URL from our own settings in the developer check script (3), no integrity hash on our own font files (3, only needed for files from other sites). Semgrep read a few lines of 4 files only in part |
+| Attacks on a running lobby and room | `scripts/security-check.sh`, 29 checks | all pass, after the fix below |
+
+The attack checks try: the security headers of every page, the cookie's flags, a 20 KB request, broken JSON, a cross-site form post, a request from another origin, admin actions with no key and a wrong key, whether the public numbers show names, a wrong and a missing room key, an unknown room, path tricks such as `../` and encoded `%2e%2e` on the room address, markup in chat, a flood of 30 messages, and a 5,000-character message.
+
+**Found and fixed:** another site could show Duet's pages inside a frame, and a disguised page could then trick someone into pressing Report or Send (clickjacking). Every page now forbids it, with `frame-ancestors 'none'` and `X-Frame-Options: DENY`, and turns off camera, microphone and location; a test checks the headers.
+
+**Known limits, on purpose or not yet done**
+
+- Scripts and styles are packed into each page, so the policy allows inline scripts. The defence against injected markup is that no person's text is ever inserted as HTML (checked above). Next step: hashes for each inline script instead.
+- The policy allows WebSocket connections to any address (`ws:`, `wss:`), because the room's own socket needs it.
+- The lobby's saved state holds each person's private return code in plain text (readable only by the lobby's user), so the state file must be protected like a password file.
+- The lobby has no per-address rate limit of its own: run it behind a proxy that has one. It has no TLS of its own either: run it behind HTTPS.
+- No moderation beyond Report, and adults only by a tick box.
 
 ## What is kept
 
